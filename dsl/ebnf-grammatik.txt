@@ -1,0 +1,5 @@
+Diagramm ::= Entität+ Beziehung*
+Entität ::= Name "(" Attribut+ ")"
+Attribut ::= "*" Name | "[" Name "]" | Name
+Beziehung ::= Name "--" Kardinalität "--" Name "--" Kardinalität "--" Name
+Kardinalität ::= "(" Zahl "," Zahl ")"
