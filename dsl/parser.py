@@ -31,11 +31,11 @@ def parse_mermaid_text(mermaid_text):
         matches = re.findall(regex_muster_kanten[0], line) 
         for relationship,relation_name, cardinalitaet, entitaet in matches: 
             graph.add_node(relationship, type="Relationship"),
-            graph.add_edge(relationship, entitaet, Kardinalität=cardinalitaet)
+            graph.add_edge(relationship, entitaet,Beziehung="Relationship-Entität", Kardinalität=cardinalitaet)
         matches = re.findall(regex_muster_kanten[1], line)
         for entitaet, cardinalitaet, relationship, relationship_name in matches: 
             graph.add_node(relationship, type="Relationship"),
-            graph.add_edge(entitaet, relationship, Kardinalität=cardinalitaet)
+            graph.add_edge(entitaet, relationship, Beziehung="Entität-Relationship", Kardinalität=cardinalitaet)
     return graph 
     
 mermaid_text =  """mermaid
@@ -50,7 +50,7 @@ flowchart
         B3---B5([Breite])
         B3---B6([Höhe])
         Produzent--(1,*)---herstellen{herstellen}
-        herstellen--(1,1)---Bauteil 
+        herstellen{herstellen}--(1,1)---Bauteil 
         herstellen---H1([Jahr])
         Bauteil--(0,*)---bestehen_aus{bestehen_aus}
         bestehen_aus{bestehen_aus}--(0,*)---Bauteil 
