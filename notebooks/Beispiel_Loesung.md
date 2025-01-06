@@ -14,13 +14,13 @@ flowchart
         B3---B6([Höhe])
     end
     subgraph SG3 [ ]
-        Produzent -- (1,*) --- herstellen{herstellen}
-        herstellen -- (1,1) --- Bauteil 
-        herstellen---H1([Jahr])
+        Produzent--(1,*)---herstellen{herstellen}
+        herstellen{herstellen}--(1,1)---Bauteil 
+        herstellen{herstellen}---H1([Jahr])
     end
     subgraph SG4 [ ]
-        Bauteil -- (0,*) --- bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus} -- (0,*) --- Bauteil
+        Bauteil--(0,*)---bestehen_aus{bestehen_aus}
+        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
     end    
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
