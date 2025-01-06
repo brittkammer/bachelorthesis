@@ -1,17 +1,21 @@
-import re 
+import re
 import networkx as nx
 
 def parse_nodes(line, graph):
-    node_pattern = r"(\w+)---(\w+)\(\[\"<ins>(.*?)</ins>\"\]\)"  # Regex für Knoten
-    matches = re.findall(node_pattern, line)
+    # regex_muster_nodes = [
+    #     r"(\w+)---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)",  # Mit <ins>-Tags - Primärschlüssel
+    #     r"(\w+)---(\w+)\(\[(.*?)\]\)",                     # Ohne Tags - normales Attribut
+    #     r"(\w+)---(\w+)\(\(\((.*?)\)\)\)"                  # Verschachtelte Klammern - zusammengesetztes Attribut
+    # ]
+    regex_muster_nodes = r"(\w+)---(\w+)\(\[(?:(?:`?<ins>(.*?)<\/ins>`?)|([^]]*?))\]\)|(\w+)---(\w+)\(\(\((.*?)\)\)\)"
+    matches = re.findall(regex_muster_nodes, line)
     for entity, attr_id, attribute in matches:
         graph.add_node(entity, type="entity")
         graph.add_node(attr_id, type="attribute", label=attribute)
-        graph.add_edge(entity, attr_id, relationship="has")
-
+        graph.add_edge(entity, attr_id, relationship="hat")
 
 def parse_relationships(line, graph):
-    relationship_pattern = r"(\w+) -- \((\d+,\*|\d+,\d+)\) --- (\w+)\{(.*?)\} -- \((\d+,\*|\d+,\d+)\) --- (\w+)"
+    relationship_pattern = r"(\w+)\s*--\s*\((\d+,\*|\d+,\d+)\)\s*---\s*(\w+)\{(.*?)\}\s*--\s*\((\d+,\*|\d+,\d+)\)\s*---\s*(\w+)"
     match = re.search(relationship_pattern, line)
     if match:
         entity1, card1, rel_id, label, card2, entity2 = match.groups()
@@ -19,11 +23,10 @@ def parse_relationships(line, graph):
         graph.add_edge(entity1, rel_id, cardinality=card1)
         graph.add_edge(rel_id, entity2, cardinality=card2)
 
-
-def parse_mermaid(mermaid_code): 
+def parse_mermaid(mermaid_code):
     graph = nx.DiGraph()
     lines = mermaid_code.split("\n")
-    for line in lines: 
+    for line in lines:
         if "---" in line and "[" in line:
             parse_nodes(line, graph)
         elif "--" in line and "{" in line:
@@ -51,7 +54,6 @@ flowchart
 
 graph = parse_mermaid(mermaid_code)
 
-# Ausgeben der Graph-Knoten und -Kanten
 print("Knoten:")
 for node, data in graph.nodes(data=True):
     print(node, data)
