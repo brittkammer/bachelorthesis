@@ -1,16 +1,17 @@
 import re 
 import networkx as nx 
 
-def alhabetisch_sortieren(text):
-    lines = text.split("\n")
-    sorted_lines = sorted(lines)
-    return sorted_lines
+# def alhabetisch_sortieren(text):
+#     lines = text.split("\n")
+#     # sorted_lines = sorted(lines)
+#     # return sorted_lines
+#     return lines
 
 def parse_mermaid_text(mermaid_text):
     #regex_muster_knoten = r"(\w+)---(\w+)\(\[(?:(?:`?<ins>(.*?)<\/ins>`?)|([^\]]*?))\]\)|\((\w+)---(\w+)\(\(\((.*?)\)\)\)" 
     regex_muster_knoten = [
         r"(\w+)---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)",  # Mit <ins>-Tags - Primärschlüssel
-        r"(\w+)---(\w+)\(\[(.*?)\]\)",                      # Ohne Tags - normales Attribut
+        r"(\w+)---(\w+)\(\[(\w+)\]\)",                      # Ohne Tags - normales Attribut
         r"(\w+)---(\w+)\(\(\((.*?)\)\)\)"                   # Verschachtelte Klammern - mehrwertiges Attribut
     ]
 
@@ -22,10 +23,12 @@ def parse_mermaid_text(mermaid_text):
     regex_schwache_entitaeten = r""
 
     graph = nx.DiGraph()
-    # lines = mermaid_text.split("\n")
-    lines = mermaid_text 
-
+    lines = mermaid_text.split("\n")
+    # lines = mermaid_text 
+    global counter_kanten
+    counter_kanten = 0
     for line in lines: 
+        # print(counter_kanten)
         # Hinzufügen der Knoten
         for muster in regex_muster_knoten:
             matches = re.findall(muster, line)
@@ -33,30 +36,39 @@ def parse_mermaid_text(mermaid_text):
                 graph.add_node(entitaet, type="Entität")
                 if muster == regex_muster_knoten[0]:
                     graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attribut_name)
-                    graph.add_edge(entitaet, attribut_id, Beziehung="hat Primärschlüssel-Attribut")
+                    graph.add_edge(entitaet, attribut_id, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
+                    counter_kanten = counter_kanten + 1
                 elif muster == regex_muster_knoten[1]: 
                     graph.add_node(attribut_id, type="Attribut", label=attribut_name)
-                    graph.add_edge(entitaet, attribut_id, Beziehung="hat Attribut")
+                    graph.add_edge(entitaet, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
+                    counter_kanten = counter_kanten + 1
                 elif muster == regex_muster_knoten[2]: 
                     graph.add_node(attribut_id, type="mehrwertiges Attribut", label=attribut_name)
-                    graph.add_edge(entitaet, attribut_id, Beziehung="hat mehrwertiges Attribut")
+                    graph.add_edge(entitaet, attribut_id, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
+                    counter_kanten = counter_kanten + 1
 
         matches = re.findall(regex_zusammengesetztes_atrribut, line)
         for attribut_zusammengesetzt_id, attribut_zusammengesetzt_name, attribut_id, attribut_name in matches: # überschreiben des Typs des zusammengesetzten Attributes, Label bleibt gleich
             graph.add_node(attribut_zusammengesetzt_id, type="zusammengesetztes Attribut", label=attribut_zusammengesetzt_name)
             graph.add_node(attribut_id, type="Attribut", label=attribut_name)
-            graph.add_edge(attribut_zusammengesetzt_id, attribut_id, Beziehung="hat Attribut")
+            graph.add_edge(attribut_zusammengesetzt_id, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
+            # print(counter_kanten)
+
         # Hinzufügen der Kanten
         matches = re.findall(regex_muster_kanten[0], line) 
         for relationship,relation_name, cardinalitaet, entitaet in matches: 
             graph.add_node(relationship, type="Relationship"),
-            graph.add_edge(relationship, entitaet,Beziehung="Relationship-Entität", Kardinalität=cardinalitaet)
+            graph.add_edge(relationship, entitaet,Beziehung="Relationship-Entität", Kardinalität=cardinalitaet, Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
+            # print(counter_kanten)
         matches = re.findall(regex_muster_kanten[1], line)
         for entitaet, cardinalitaet, relationship, relationship_name in matches: 
             graph.add_node(relationship, type="Relationship"),
-            graph.add_edge(entitaet, relationship, Beziehung="Entität-Relationship", Kardinalität=cardinalitaet)
-        
+            graph.add_edge(entitaet, relationship, Beziehung="Entität-Relationship", Kardinalität=cardinalitaet, Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
         # was passiert mit lines die nicht auf die regex-muster passen? 
+    # print(f"Anzahl Kanten: {counter_kanten}")
     return graph 
     
 mermaid_text =  """mermaid
@@ -76,7 +88,7 @@ flowchart
         Bauteil--(0,*)---bestehen_aus{bestehen_aus}
         bestehen_aus{bestehen_aus}--(0,*)---Bauteil 
 """
-# graph = parse_mermaid_text(mermaid_text)
+graph = parse_mermaid_text(mermaid_text)
 # print("Knoten:")
 # for node, data in graph.nodes(data=True):
 #     print(node, data)

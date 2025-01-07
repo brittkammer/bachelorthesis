@@ -57,11 +57,13 @@ flowchart
     style B7 fill:#0000ff, stroke:#333,stroke-width:0px
 """
 # studentische_loesung = musterloesung
-musterloesung_sortiert = parse_into_graph.alhabetisch_sortieren(musterloesung)
-studentische_loesung_sortiert = parse_into_graph.alhabetisch_sortieren(studentische_loesung)
+# musterloesung_sortiert = parse_into_graph.alhabetisch_sortieren(musterloesung)
+# studentische_loesung_sortiert = parse_into_graph.alhabetisch_sortieren(studentische_loesung)
 
-muster_graph = parse_into_graph.parse_mermaid_text(musterloesung_sortiert)
-studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung_sortiert)
+# muster_graph = parse_into_graph.parse_mermaid_text(musterloesung_sortiert)
+# studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung_sortiert)
+muster_graph = parse_into_graph.parse_mermaid_text(musterloesung)
+studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung)
 
 def compare_graphs(muster_graph, studenten_graph):
     fehler = {
@@ -119,6 +121,8 @@ def compare_graphs(muster_graph, studenten_graph):
     for edge1, edge2, data in studenten_graph.edges(data=True):
         if muster_graph.has_edge(edge1, edge2) == False: 
             fehler["extra_Kanten"].append(edge1 + " zu " + edge2)
+            falsche_Kante_Nummer = data["Nummer"]
+            fehler_visualisierung["extra_Kanten_gelb"].append(f"linkStyle {falsche_Kante_Nummer} stroke:#FFD966,stroke-width:2px,color:#FFD966, fill:none;")
             # fehler_visualisierung für Kanten --> welche kante ist das? 
 
 # Hinzufügen von faschen Knoten und Kanten auf der Fehlerliste 
@@ -148,8 +152,13 @@ def compare_graphs(muster_graph, studenten_graph):
     for edge1, edge2, data in muster_graph.edges(data=True): 
         for u, v, dataaa in studenten_graph.edges(data=True): 
             if (u,v) == (edge1, edge2): 
-                if data != dataaa:                             
-                    fehler["falsche_Kanten"].append(f"Muster: {edge1} zu {edge2} mit {data}, Studentische Lösung: {dataaa}")
+                if data != dataaa:  
+                    for key, value in data.items(): 
+                        if key == "Kardinalität": 
+                            if dataaa[key] != value: 
+                                falsche_Kante_Nummer = dataaa["Nummer"]
+                                fehler["falsche_Kanten"].append(f"Muster: {edge1} zu {edge2} mit {data}, Studentische Lösung: {dataaa}")
+                                fehler_visualisierung["falsche_Kanten_rot"].append(f"linkStyle {falsche_Kante_Nummer} stroke:#d62728,stroke-width:2px,color:#d62728,fill:none;")
                 # for key, value in data.items(): 
                 #     if dataaa.items() != data.items(): 
                 #         print(data.items())
@@ -159,6 +168,7 @@ def compare_graphs(muster_graph, studenten_graph):
     print(fehler_visualisierung)
     # print(f"Knoten in muster_graph: {muster_graph.nodes(data=True)}")
     # print(f"Kanten in muster_graph: {muster_graph.edges(data=True)}")
+    # print(f"Kanten in studenten_graph: {studenten_graph.edges(data=True)}")
     # print(muster_graph.nodes(data=True))
     # print(studenten_graph.nodes(data=True))
     # print(muster_graph.get_node_data())
