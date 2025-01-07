@@ -91,7 +91,7 @@ def compare_graphs(muster_graph, studenten_graph):
     for node, data in muster_graph.nodes(data=True): 
         if studenten_graph.__contains__(node) == False:
             fehler["fehlende_Knoten"].append(node)
-            fehler_visualisierung["fehlende_Kanten_Info"][0].append(f"Fehler_Kanten[Fehler: Es fehlen noch Beziehungen zwischen Enitäten, Attributen oder Relationships.] ")
+            fehler_visualisierung["fehlende_Kanten_Info"].append(f"Fehler_Kanten[Fehler: \n Es fehlen noch Beziehungen zwischen Enitäten, Attributen oder Relationships.]\n fill:#fde2e1,stroke:#b91c1c,stroke-width:2p ")
             for knoten, daten in studenten_graph.nodes(data=True):
                 # wenn alle Kanten von node und Knoten gleich sind, dann Fehler für falscher_Name_Knoten
                 # print(list(studenten_graph.neighbors(knoten)))
@@ -103,20 +103,23 @@ def compare_graphs(muster_graph, studenten_graph):
                     studenten_graph_predecessors = list(studenten_graph.predecessors(knoten))
                     if data == daten and sorted(musterloesung_neighbors) == sorted(studenten_graph_neighbors) and sorted(musterloesung_predecessors)==sorted(studenten_graph_predecessors):
                         fehler["falscher_Name_Knoten"].append(f"Muster: {node} ist gemeint mit: {knoten}")
-                
+                        fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"style {knoten} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px ")
 
     for edge1, edge2, data in muster_graph.edges(data=True):
         if studenten_graph.has_edge(edge1,edge2) == False: 
             fehler["fehlende_Kanten"].append(edge1 + " zu " + edge2)
+            # fehler_visualisierung["extra_Kanten_gelb"].append(f"style {}") wie passe ich nur die Kante an? woher weiß ich welche Kante das ist?
 
 # Hinzufügen von zusätzlichen Knoten und Kanten auf der Fehlerliste
     for node, data in studenten_graph.nodes(data=True): 
         if muster_graph.__contains__(node) == False:
             # if muster_graph.get_node_data():
             fehler["extra_Knoten"].append(node)
+            fehler_visualisierung["extra_Knoten_gelb"].append(f"style {node} fill:#d9eaf7,stroke:#045a8d,stroke-width:2px")
     for edge1, edge2, data in studenten_graph.edges(data=True):
         if muster_graph.has_edge(edge1, edge2) == False: 
             fehler["extra_Kanten"].append(edge1 + " zu " + edge2)
+            # fehler_visualisierung für Kanten --> welche kante ist das? 
 
 # Hinzufügen von faschen Knoten und Kanten auf der Fehlerliste 
     for node, data in muster_graph.nodes(data=True):
@@ -130,9 +133,11 @@ def compare_graphs(muster_graph, studenten_graph):
                 if key == "type": 
                     if studentenloesung_data[key] != value: 
                         fehler["falscher_Typ_Knoten"].append("Muster: " + str(blabla) + "Studentische Lösung: " + studentenloesung_data.get(key, None))
+                        fehler_visualisierung["falscher_Typ_Knoten_rot"].append(f"style {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px") 
                 if key == "label": 
                     if studentenloesung_data[key] != value: 
                         fehler["falscher_Name_Knoten"].append("Muster: " + str(blabla) + "Studentische Lösung: " + studentenloesung_data.get(key, None))
+                        fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"style {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px")
                 # if key not in studentenloesung_data or studentenloesung_data[key] != value:
                 #     # print(key)
                 #     # print(value)
@@ -151,6 +156,7 @@ def compare_graphs(muster_graph, studenten_graph):
                 #         print(dataaa.items())
 
     print(fehler)
+    print(fehler_visualisierung)
     # print(f"Knoten in muster_graph: {muster_graph.nodes(data=True)}")
     # print(f"Kanten in muster_graph: {muster_graph.edges(data=True)}")
     # print(muster_graph.nodes(data=True))
