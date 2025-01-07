@@ -27,6 +27,7 @@ musterloesung = """mermaid
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
 """
+
 studentische_loesung = """mermaid
 flowchart
     subgraph SG1 [ ]
@@ -49,12 +50,12 @@ flowchart
         Bauteil--(2,3)---bestehen_aus{bestehen_aus}
         bestehen_aus{bestehen_aus}--(0,*)---Bauteil
     end    
-    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style herstellen fill:#ff0000,stroke:#333,stroke-width:0px
-    style P2 fill:#ffff00, stroke:#333,stroke-width:0px
-    style B7 fill:#0000ff, stroke:#333,stroke-width:0px
+\tstyle SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+\tstyle SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+\tstyle SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+\tstyle herstellen fill:#ff0000,stroke:#333,stroke-width:0px
+\tstyle P2 fill:#ffff00, stroke:#333,stroke-width:0px
+\tstyle B7 fill:#0000ff, stroke:#333,stroke-width:0px
 """
 # studentische_loesung = musterloesung
 # musterloesung_sortiert = parse_into_graph.alhabetisch_sortieren(musterloesung)
@@ -93,36 +94,34 @@ def compare_graphs(muster_graph, studenten_graph):
     for node, data in muster_graph.nodes(data=True): 
         if studenten_graph.__contains__(node) == False:
             fehler["fehlende_Knoten"].append(node)
-            fehler_visualisierung["fehlende_Kanten_Info"].append(f"Fehler_Kanten[Fehler: \n Es fehlen noch Beziehungen zwischen Enitäten, Attributen oder Relationships.]\n fill:#fde2e1,stroke:#b91c1c,stroke-width:2p ")
+            fehler_visualisierung["fehlende_Knoten_Info"].append(f"\tfehlerFehlendeKnoten[Fehler: Es fehlen noch Enitäten, Attribute oder Relationships.]fill:#fde2e1,stroke:#b91c1c,stroke-width:2p ")
             for knoten, daten in studenten_graph.nodes(data=True):
                 # wenn alle Kanten von node und Knoten gleich sind, dann Fehler für falscher_Name_Knoten
-                # print(list(studenten_graph.neighbors(knoten)))
                 if muster_graph.__contains__(knoten) == False:
-                    # print(f"test test {knoten} und und {node}")
                     musterloesung_neighbors= list(muster_graph.neighbors(node))
                     musterloesung_predecessors = list(muster_graph.predecessors(node))
                     studenten_graph_neighbors= list(studenten_graph.neighbors(knoten))
                     studenten_graph_predecessors = list(studenten_graph.predecessors(knoten))
                     if data == daten and sorted(musterloesung_neighbors) == sorted(studenten_graph_neighbors) and sorted(musterloesung_predecessors)==sorted(studenten_graph_predecessors):
                         fehler["falscher_Name_Knoten"].append(f"Muster: {node} ist gemeint mit: {knoten}")
-                        fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"style {knoten} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px ")
+                        fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"\tstyle {knoten} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px ")
 
     for edge1, edge2, data in muster_graph.edges(data=True):
         if studenten_graph.has_edge(edge1,edge2) == False: 
             fehler["fehlende_Kanten"].append(edge1 + " zu " + edge2)
-            # fehler_visualisierung["extra_Kanten_gelb"].append(f"style {}") wie passe ich nur die Kante an? woher weiß ich welche Kante das ist?
+            fehler_visualisierung["extra_Kanten_gelb"].append(f"\tfehlerFehlendeKanten[ Es fehlen noch Beziehungen zwischen Enitäten, Attributen oder Relationships!] fill:#fde2e1,stroke:#b91c1c,stroke-width:2p ")
 
 # Hinzufügen von zusätzlichen Knoten und Kanten auf der Fehlerliste
     for node, data in studenten_graph.nodes(data=True): 
         if muster_graph.__contains__(node) == False:
             # if muster_graph.get_node_data():
             fehler["extra_Knoten"].append(node)
-            fehler_visualisierung["extra_Knoten_gelb"].append(f"style {node} fill:#d9eaf7,stroke:#045a8d,stroke-width:2px")
+            fehler_visualisierung["extra_Knoten_gelb"].append(f"\tstyle {node} fill:#d9eaf7,stroke:#045a8d,stroke-width:2px")
     for edge1, edge2, data in studenten_graph.edges(data=True):
         if muster_graph.has_edge(edge1, edge2) == False: 
             fehler["extra_Kanten"].append(edge1 + " zu " + edge2)
             falsche_Kante_Nummer = data["Nummer"]
-            fehler_visualisierung["extra_Kanten_gelb"].append(f"linkStyle {falsche_Kante_Nummer} stroke:#FFD966,stroke-width:2px,color:#FFD966, fill:none;")
+            fehler_visualisierung["extra_Kanten_gelb"].append(f"\tlinkStyle {falsche_Kante_Nummer} stroke:#FFD966,stroke-width:2px,color:#FFD966, fill:none;")
             # fehler_visualisierung für Kanten --> welche kante ist das? 
 
 # Hinzufügen von faschen Knoten und Kanten auf der Fehlerliste 
@@ -137,42 +136,42 @@ def compare_graphs(muster_graph, studenten_graph):
                 if key == "type": 
                     if studentenloesung_data[key] != value: 
                         fehler["falscher_Typ_Knoten"].append("Muster: " + str(blabla) + "Studentische Lösung: " + studentenloesung_data.get(key, None))
-                        fehler_visualisierung["falscher_Typ_Knoten_rot"].append(f"style {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px") 
+                        fehler_visualisierung["falscher_Typ_Knoten_rot"].append(f"\tstyle {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px") 
                 if key == "label": 
                     if studentenloesung_data[key] != value: 
                         fehler["falscher_Name_Knoten"].append("Muster: " + str(blabla) + "Studentische Lösung: " + studentenloesung_data.get(key, None))
-                        fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"style {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px")
-                # if key not in studentenloesung_data or studentenloesung_data[key] != value:
-                #     # print(key)
-                #     # print(value)
-                #     if key == "type":
-                #         fehler["falscher_Typ_Knoten"].append("Muster: " + str(blabla) + "Studentische Lösung: " + studentenloesung_data.get(key, None))
-                #     if key == "label":
-                #         fehler["falscher_Name_Knoten"].append("Muster: " + str(blabla) + "Studentische Lösung: " + studentenloesung_data.get(key, None))
+                        fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"\tstyle {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px")
     for edge1, edge2, data in muster_graph.edges(data=True): 
         for u, v, dataaa in studenten_graph.edges(data=True): 
-            if (u,v) == (edge1, edge2): 
-                if data != dataaa:  
-                    for key, value in data.items(): 
-                        if key == "Kardinalität": 
-                            if dataaa[key] != value: 
-                                falsche_Kante_Nummer = dataaa["Nummer"]
-                                fehler["falsche_Kanten"].append(f"Muster: {edge1} zu {edge2} mit {data}, Studentische Lösung: {dataaa}")
-                                fehler_visualisierung["falsche_Kanten_rot"].append(f"linkStyle {falsche_Kante_Nummer} stroke:#d62728,stroke-width:2px,color:#d62728,fill:none;")
-                # for key, value in data.items(): 
-                #     if dataaa.items() != data.items(): 
-                #         print(data.items())
-                #         print(dataaa.items())
-
-    print(fehler)
-    print(fehler_visualisierung)
+            if (u,v) == (edge1, edge2) and data != dataaa:  
+                for key, value in data.items(): 
+                    if key == "Kardinalität" and dataaa[key] != value: 
+                        falsche_Kante_Nummer = dataaa["Nummer"]
+                        fehler["falsche_Kanten"].append(f"Muster: {edge1} zu {edge2} mit {data}, Studentische Lösung: {dataaa}")
+                        fehler_visualisierung["falsche_Kanten_rot"].append(f"\tlinkStyle {falsche_Kante_Nummer} stroke:#d62728,stroke-width:2px,color:#d62728,fill:none;")
+    return fehler_visualisierung
+    # print(fehler)
+    # print(fehler_visualisierung)
     # print(f"Knoten in muster_graph: {muster_graph.nodes(data=True)}")
     # print(f"Kanten in muster_graph: {muster_graph.edges(data=True)}")
     # print(f"Kanten in studenten_graph: {studenten_graph.edges(data=True)}")
-    # print(muster_graph.nodes(data=True))
-    # print(studenten_graph.nodes(data=True))
-    # print(muster_graph.get_node_data())
-    # print(nx.vf2pp_isomorphism(muster_graph, studenten_graph, node_label="type"))
-    # print(nx.vf2pp_all_isomorphisms(muster_graph, studenten_graph, node_label=None))
+    # for x in fehler_visualisierung: 
+    #     # if liste != leer 
+    #     for y in fehler_visualisierung[x]:
+    #         if y not in studentische_loesung: 
+    #             studentische_loesung = studentische_loesung + f"\n {y}"
+    # print(studentische_loesung)
 
-compare_graphs(muster_graph, studenten_graph)
+
+fehler = compare_graphs(muster_graph, studenten_graph)
+
+def visualisieren(fehler, studentische_loesung):
+    for x in fehler:
+        for y in  fehler[x]:
+            if y not in studentische_loesung: 
+                studentische_loesung = studentische_loesung + f"\n {y}"
+        
+    print(studentische_loesung)
+
+
+visualisieren(fehler, studentische_loesung)

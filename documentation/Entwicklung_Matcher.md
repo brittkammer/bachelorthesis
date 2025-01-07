@@ -16,3 +16,24 @@ vielleicht das Konzept der Filterung der Fehler überarbeieten, sodass dort mehr
     wenn dort Mehrfachnennungen auftreten, dann werden die als das gleiche ELement betrachtet
     was wie bei Bauteil gewollt sein kann, aber eben auch nicht immer 
     wenn z.B. 2 verschiedene Entitäten beide Name als Attribut haben 
+
+# 07.01.2025 
+- Visualiserung der Fehler mit einem zweit dict, um für die debugging zwecke immer noch das erste verwenden zu können 
+- Visualiserung soll wie folgt erfolgen: 
+    Fehler wird erkannt und dem dict fehler_visualiserungen hinzugefügt
+    Format in fehler_visualisierungen ist immer für style Knoten etc. / linkStyle Kante etc.
+    dict fehler_visualisierungen der studentischen Lösung hinzufügen 
+    (dabei werden für fehlenden Kanten/Knoten nur Hinweise ausgegeben) 
+    --> andere Fehler wie falscher Typ / Name, extra Kante / Knoten werden farblich visualiert
+
+- Aktuelles Problem: 
+    - Wie kann ich die farblichen Anpassungen für die Kanten hinzufügen? 
+    - linkStyle Kante etc... 
+    --> benötigt die Nummer der Kante, d.h. die Zahl der Reihenfolge in der sie in mermaid.js hinzugefügt wird 
+    --> Idee: Reihenfolge / Nummer als Attribut im Graph hinzufügen 
+    --> so kann einfach das Attribut abgerufen werden und die Nummer dann für die Fehler Visualisierung verwendet werden
+
+Um korrekte Visualisierungen als Output zu haben: 
+    - tabulator entsprechend in der studentischen Lösung / Musterlösung hinzufügen
+    --> muss automatisch passieren wenn studenten was eintippen
+    --> sonst output der visualisierungen = fehler 
