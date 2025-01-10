@@ -5,9 +5,12 @@
 - Abgabedatum: 03.03.2025
 
 ## ToDo's
-- Integrieren von mermaid
-- Übersicht der Darstellungselemente in mermaid
-- Entwicklung eines Parsers
-- Entwicklung eines Matching_systems
+- Einbindung von mermaid in Jupyter Notebooks
+- Wie geben Studenten ihre Lösung in Jupyter Notebook ein? --> Parser dafür?
+- Ausgabe des Feedbacks in Jupyter Notebooks
+- Automatisierung der Abgabe der studentische Lösung und des Feedbacks (Container?)
+- Wie kann die Musterlösung "geheim" gehalten / nicht einsehbar für Stuenten bleiben? 
 
 ## Done: 
+- Entwicklung des Parser
+- Entwicklung des Matching Systems
