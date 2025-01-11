@@ -1,12 +1,6 @@
 import re 
 import networkx as nx 
 
-# def alhabetisch_sortieren(text):
-#     lines = text.split("\n")
-#     # sorted_lines = sorted(lines)
-#     # return sorted_lines
-#     return lines
-
 def parse_mermaid_text(mermaid_text):
     #regex_muster_knoten = r"(\w+)---(\w+)\(\[(?:(?:`?<ins>(.*?)<\/ins>`?)|([^\]]*?))\]\)|\((\w+)---(\w+)\(\(\((.*?)\)\)\)" 
     regex_muster_knoten = [
@@ -17,18 +11,17 @@ def parse_mermaid_text(mermaid_text):
 
     regex_muster_kanten = [
         r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)", # Relationship{}--()---Entiät
-        r"(\w+)--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}" # Entität--()---Relationship{}
+        r"(\w+)--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}", # Entität--()---Relationship{}
+        r"(\w+)\{(\w+)\}---(\w+)\(\[(\w+)\]\)"                  # Relationship{}---Attribut([])
     ]
     regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+)\]\)---(\w+)\(\[([^\[\]]+)\]\)" # für Attribute die Atrribute enthalten
-    regex_schwache_entitaeten = r""
+    regex_schwache_entitaeten = r"" # schwache Enitäten 
 
     graph = nx.DiGraph()
     lines = mermaid_text.split("\n")
-    # lines = mermaid_text 
-    global counter_kanten
+    global counter_kanten 
     counter_kanten = 0
     for line in lines: 
-        # print(counter_kanten)
         # Hinzufügen der Knoten
         for muster in regex_muster_knoten:
             matches = re.findall(muster, line)
@@ -67,33 +60,47 @@ def parse_mermaid_text(mermaid_text):
             graph.add_node(relationship, type="Relationship"),
             graph.add_edge(entitaet, relationship, Beziehung="Entität-Relationship", Kardinalität=cardinalitaet, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
+        matches = re.findall(regex_muster_kanten[2], line)
+        for relationship, relation_name, attribut_id, attribut_name in matches: 
+            graph.add_node(attribut_id, type="Attribut", label=attribut_name)
+            graph.add_edge(relationship, attribut_id, Beziehung="Relationship-Attribut", Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
         # was passiert mit lines die nicht auf die regex-muster passen? 
     # print(f"Anzahl Kanten: {counter_kanten}")
     return graph 
     
 mermaid_text =  """mermaid
 flowchart
+    subgraph SG1 [ ]
         Produzent---P1(["`<ins>ProdId</ins>`"])
-        Produzent---P2([Name])
         Produzent---P3(((Zertifikate)))
+    end
+    subgraph SG2 [ ]
         Bauteil---B1(["`<ins>Name</ins>`"])
         Bauteil---B2([Gewicht])
         Bauteil---B3([Größe])
+        Bauteil---B7([Farbe])
         B3([Größe])---B4([Länge])
         B3([Größe])---B5([Breite])
         B3([Größe])---B6([Höhe])
-        Produzent--(1,*)---herstellen{herstellen}
-        herstellen{herstellen}--(1,1)---Bauteil 
-        herstellen---H1([Jahr])
-        Bauteil--(0,*)---bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus}--(0,*)---Bauteil 
+    end
+    subgraph SG3 [ ]
+        Produzent--(1,*)---bauen{bauen}
+        bauen{bauen}--(1,1)---Bauteil 
+        bauen{bauen}---H1([Jahr])
+        Bauteil--(2,3)---bestehen_aus{bestehen_aus}
+        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
+    end    
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
 """
 graph = parse_mermaid_text(mermaid_text)
-# print("Knoten:")
-# for node, data in graph.nodes(data=True):
-#     print(node, data)
+print("Knoten:")
+for node, data in graph.nodes(data=True):
+    print(node, data)
 
-# print("\nKanten:")
-# for u, v, data in graph.edges(data=True):
-#     print(u, v, data)
-# print(graph)
+print("\nKanten:")
+for u, v, data in graph.edges(data=True):
+    print(u, v, data)
+print(graph)
