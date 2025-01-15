@@ -95,12 +95,13 @@ flowchart
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
 """
-graph = parse_mermaid_text(mermaid_text)
-print("Knoten:")
-for node, data in graph.nodes(data=True):
-    print(node, data)
 
-print("\nKanten:")
-for u, v, data in graph.edges(data=True):
-    print(u, v, data)
-print(graph)
+graph = parse_mermaid_text(mermaid_text)
+# print("Knoten:")
+# for node, data in graph.nodes(data=True):
+#     print(node, data)
+
+# print("\nKanten:")
+# for u, v, data in graph.edges(data=True):
+#     print(u, v, data)
+# print(graph)
