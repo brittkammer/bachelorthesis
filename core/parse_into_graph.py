@@ -15,7 +15,15 @@ def parse_mermaid_text(mermaid_text):
         r"(\w+)\{(\w+)\}---(\w+)\(\[(\w+)\]\)"                  # Relationship{}---Attribut([])
     ]
     regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+)\]\)---(\w+)\(\[([^\[\]]+)\]\)" # für Attribute die Atrribute enthalten
-    regex_schwache_entitaeten = r"" # schwache Enitäten 
+    regex_schwache_entitaeten = [
+        r"" # SchwacheEntität[[]]---Entität
+        r"" # Entität---SchwacheEntität[[]]
+        r"" # SchwacheEntität[[]]---Attribut
+        r"" # SchwacheEntität[[]]---Relationship{}
+    ] # schwache Enitäten 
+    regex_is_a = [
+        r""
+    ] # Darstellungselement Is-A 
 
     graph = nx.DiGraph()
     lines = mermaid_text.split("\n")

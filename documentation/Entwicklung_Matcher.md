@@ -37,3 +37,10 @@ Um korrekte Visualisierungen als Output zu haben:
     - tabulator entsprechend in der studentischen Lösung / Musterlösung hinzufügen
     --> muss automatisch passieren wenn studenten was eintippen
     --> sonst output der visualisierungen = fehler 
+
+Um richtige zusätzliche Kanten trotz falschen Knoten zu erkennen, sollte jede zusätzliche Kante auch geprüft werden, ob diese in der Musterlösung existiert und wenn nicht dann als richtige extra kante erkannt werden und ansonsten sollte sie nicht visuell hervorgehoben werden
+
+# Update 
+    - zusätzliche Kanten die an falsch geschriebenen Knoten liegen werden nun ignoriert 
+    - Problem: wenn Fehler in den zusätzlichen Kanten liegen bei der Kradinalität werden diese auch ignoriert
+    - Lösung? 
