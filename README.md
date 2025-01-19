@@ -4,14 +4,20 @@
 ## Ziele: 
 - Abgabedatum: 03.03.2025
 
-## ToDo's
-- Einbindung von mermaid in Jupyter Notebooks
-- Wie geben Studenten ihre Lösung in Jupyter Notebook ein? --> Parser dafür?
-- Ausgabe des Feedbacks in Jupyter Notebooks
-- Automatisierung der Abgabe der studentische Lösung und des Feedbacks (Container?)
-- Wie kann die Musterlösung "geheim" gehalten / nicht einsehbar für Stuenten bleiben?
-- Tests für Musterlösungen / studentische Lösungen, ob alle Fehler erkannt werden
+## ToDo's 
+### Parser 
+    - [] Musterlösungen mit mehreren Begriffen für denselben Knoten einbinden
+    - [] weitere regex muster einbinden so dass möglich viele Arten von Eingaben abgefangen werden 
+    - [] welche lines fallen nicht in die regexmuster? 
+    - [] die dann zusätzlich an den matcher weitergeben, sodass hier eine liste mit denen erstellt wird und diese als Syntax Fehler ausgegeben werden.
+### Matcher  
+    - [] Fehler (mehrere Knoten falsch betitelt, aber Typ, Kanten etc stimmt) erkennen 
+        --> Überprüfung der Kanten jedoch erst später, sodass falsche Kanten trotzdem aussortiert werden
+### Tests
+    - [] Tests für Musterlösungen / studentische Lösungen, ob alle Fehler erkannt werden
 
-## Done: 
-- Entwicklung des Parser
-- Entwicklung des Matching Systems
+### Webservice 
+    - [] erstellen eines Dockerfiles welches dann einen Webservice baut
+    - [] Hinzufügen von Magic-Bibliothek 
+    - [] vollständige Integration in Jupyter Notebook --> automatisiertes Feedback nach Abgabe
+    - [] Wie kann die Musterlösung "geheim" gehalten / nicht einsehbar für Stuenten bleiben?
