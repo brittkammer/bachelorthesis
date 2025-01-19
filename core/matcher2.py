@@ -38,15 +38,15 @@ flowchart
         Gerät---B1(["`<ins>Name</ins>`"])
         Gerät---B2([Gewicht])
         Gerät---B3([Größe])
-        Gerät---B7([Farbe])
-        B3([Größe])---B4([Länge])
-        B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Höhe])
+        Gerät---B7([Farbee])
+        B3([Größe])---B4([Längeee])
+        B3([Größe])---B5([Breiteee])
+        B3([Größe])---B6([Höhee])
     end
     subgraph SG3 [ ]
         Produzent--(1,*)---bauen{bauen}
         bauen{bauen}--(1,1)---Gerät 
-        bauen{bauen}---H1([Jahr])
+        bauen{bauen}---H1([Year])
         Gerät--(2,3)---bestehen_aus{bestehen_aus}
         bestehen_aus{bestehen_aus}--(0,*)---Gerät
     end    
@@ -56,11 +56,12 @@ flowchart
 """
 muster_graph = parse_into_graph.parse_mermaid_text(musterloesung)
 studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung)
-print(studenten_graph.nodes())
+# print(studenten_graph.nodes())
 
 def compare_graphs(muster_graph, studenten_graph):
     fehler = {
 # Fehler bei Knoten
+        "richtige_Knoten": [],
         "fehlende_Knoten": [],
         "extra_Knoten": [],
         "falscher_Typ_Knoten": [], #typabweichung
@@ -71,13 +72,15 @@ def compare_graphs(muster_graph, studenten_graph):
         "falsche_Kanten": [] # Kardinalität, Beziehung?
     }
     fehler_visualisierung= {
+        "richtige_Knoten": [],
         "fehlende_Knoten_Info": [],
         "extra_Knoten_gelb": [],
         "falscher_Typ_Knoten_rot": [],
         "falscher_Name_Knoten_rot": [],
         "fehlende_Kanten_Info": [],
         "extra_Kanten_gelb": [],
-        "falsche_Kanten_rot": []
+        "falsche_Kanten_rot": [],
+        "richtige_Kanten_grün": []
     }
 
 # Hinzufügen von fehlenden Kanten und Knoten auf der Fehlerliste
@@ -93,6 +96,8 @@ def compare_graphs(muster_graph, studenten_graph):
     #                     fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"   style {knoten} fill:#F4CCCC,stroke:#F4CCCC,color:#CC0000,stroke-width:2px,font-weight:bold;")
 # Hinzufügen von fehlenden Kanten und Knoten auf der Fehlerliste
     for node, data in muster_graph.nodes(data=True): 
+        if studenten_graph.has_node(node): 
+            fehler_visualisierung["richtige_Knoten"].append(f"   style {node} fill:#d4edda,stroke:#d4edda,stroke-width:2px")
         if not studenten_graph.has_node(node):
             fehler["fehlende_Knoten"].append(node)
             fehler_visualisierung["fehlende_Knoten_Info"].append(
@@ -103,29 +108,45 @@ def compare_graphs(muster_graph, studenten_graph):
                 if not muster_graph.has_node(knoten):
                     # Vergleiche Daten und Nachbarn
                     if data == daten:
-                        muster_nachbarn = set(muster_graph.neighbors(node))
-                        studenten_nachbarn = set(studenten_graph.neighbors(knoten))
+                        muster_nachbarn = sorted(list(muster_graph.neighbors(node))) + sorted(list(muster_graph.predecessors(node)))
+                        studenten_nachbarn = sorted(list(studenten_graph.neighbors(knoten))) + sorted(list(studenten_graph.predecessors(knoten)))
                         # Prüfen, ob die Nachbarn der studentischen Lösung in der Musterlösung sind
-                        nicht_gefunden = studenten_nachbarn - muster_nachbarn
-                        print(nicht_gefunden)
-                        if len(nicht_gefunden) <= 1:  # Maximal ein Nachbar unterscheidet sich
+                        nicht_gefunden = set(studenten_nachbarn) - set(muster_nachbarn)
+                        # print(nicht_gefunden)
+                        if len(nicht_gefunden) <= 2:  # Maximal ein Nachbar unterscheidet sich
                             fehler["falscher_Name_Knoten"].append(
                                 f"Muster: {node} ist gemeint mit: {knoten}. Unterschiedliche Nachbarn: {nicht_gefunden}"
                             )
                             fehler_visualisierung["falscher_Name_Knoten_rot"].append(
                                 f"   style {knoten} fill:#F4CCCC,stroke:#F4CCCC,color:#CC0000,stroke-width:2px,font-weight:bold;"
                             )
+                        for nachbar in muster_nachbarn:
+                            # print(muster_graph.has_edge(node, nachbar))
+                            if muster_graph.has_edge(node, nachbar) and studenten_graph.has_edge(knoten, nachbar): 
+                                muster_kard = muster_graph.get_edge_data(node, nachbar)
+                                studenten_kard = studenten_graph.get_edge_data(knoten, nachbar)
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                    fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get("Nummer")} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
+                            elif muster_graph.has_edge(nachbar, node) and studenten_graph.has_edge(nachbar, knoten):
+                                muster_kard = muster_graph.get_edge_data(nachbar,node)
+                                studenten_kard = studenten_graph.get_edge_data(nachbar, knoten)
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                    fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get("Nummer")} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
+                            
 
     for edge1, edge2, data in muster_graph.edges(data=True):
         if studenten_graph.has_edge(edge1,edge2) == False: 
             fehler["fehlende_Kanten"].append(edge1 + " zu " + edge2)
             fehler_visualisierung["fehlende_Kanten_Info"].append(f"   fehlerFehlendeKanten[ Es fehlen noch Beziehungen zwischen Enitäten, Attributen oder Relationships!] \n    style fehlerFehlendeKanten fill:#fde2e1,stroke:#b91c1c,stroke-width:2p,font-weight:bold;")
+        else: 
+            if studenten_graph.get_edge_data(edge1, edge2) == data: 
+                fehler_visualisierung["richtige_Kanten_grün"].append()
 
 # Hinzufügen von zusätzlichen Knoten und Kanten auf der Fehlerliste
     for node, data in studenten_graph.nodes(data=True): 
         if muster_graph.__contains__(node) == False:
             fehler["extra_Knoten"].append(node)
-            fehler_visualisierung["extra_Knoten_gelb"].append(f"   style {node} fill:#d9eaf7,stroke:#045a8d,stroke-width:2px")
+            fehler_visualisierung["extra_Knoten_gelb"].append(f"   style {node} fill:#FFD966,stroke:#FFD966,stroke-width:2px")
     for edge1, edge2, data in studenten_graph.edges(data=True):
         if muster_graph.has_edge(edge1, edge2) == False: 
             fehler["extra_Kanten"].append(edge1 + " zu " + edge2)
@@ -143,7 +164,7 @@ def compare_graphs(muster_graph, studenten_graph):
             for key, value in musterloesung_data.items():
                 # print(node)
                 # print(key, value)
-                # print(studentenloesung_data.get(key))
+                # print(studentenloesung_data.get(key))  
                 # if key == "type" and studentenloesung_data[key] != value: 
                 if key == "type" and studentenloesung_data.get(key) != value:
                     print("TEST ")
@@ -203,9 +224,9 @@ def compare_graphs(muster_graph, studenten_graph):
                     if f"style {knoten_falsch}" not in fehler
                 ]
                 
-    # print(f"Kanten in muster_graph: {muster_graph.edges(data=True)}")
-    # print(f"Kanten in studenten_graph: {studenten_graph.edges(data=True)}")
-    # print(fehler)
+    print(f"Kanten in muster_graph: {muster_graph.edges(data=True)}")
+    print(f"Kanten in studenten_graph: {studenten_graph.edges(data=True)}")
+    print(fehler)
     return fehler_visualisierung
 fehler = compare_graphs(muster_graph, studenten_graph)
 
@@ -217,4 +238,5 @@ def visualisieren(fehler, studentische_loesung):
                 studentische_loesung = studentische_loesung + f"\n {y}"
         
     print(studentische_loesung)
+    
 visualisieren(fehler, studentische_loesung)

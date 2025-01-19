@@ -54,10 +54,10 @@ flowchart
 
 graph = parse_mermaid(mermaid_code)
 
-print("Knoten:")
-for node, data in graph.nodes(data=True):
-    print(node, data)
+# print("Knoten:")
+# for node, data in graph.nodes(data=True):
+#     print(node, data)
 
-print("\nKanten:")
-for u, v, data in graph.edges(data=True):
-    print(u, v, data)
+# print("\nKanten:")
+# for u, v, data in graph.edges(data=True):
+#     print(u, v, data)
