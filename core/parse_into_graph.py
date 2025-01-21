@@ -34,7 +34,7 @@ def parse_mermaid_text(mermaid_text):
         for muster in regex_muster_knoten:
             matches = re.findall(muster, line)
             for entitaet, attribut_id, attribut_name in matches:
-                graph.add_node(entitaet, type="Entität")
+                graph.add_node(entitaet, type="Entität", label=entitaet)
                 if muster == regex_muster_knoten[0]:
                     graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attribut_name)
                     graph.add_edge(entitaet, attribut_id, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
@@ -59,13 +59,13 @@ def parse_mermaid_text(mermaid_text):
         # Hinzufügen der Kanten
         matches = re.findall(regex_muster_kanten[0], line) 
         for relationship,relation_name, cardinalitaet, entitaet in matches: 
-            graph.add_node(relationship, type="Relationship"),
+            graph.add_node(relationship, type="Relationship", label=relationship),
             graph.add_edge(relationship, entitaet,Beziehung="Relationship-Entität", Kardinalität=cardinalitaet, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
             # print(counter_kanten)
         matches = re.findall(regex_muster_kanten[1], line)
         for entitaet, cardinalitaet, relationship, relationship_name in matches: 
-            graph.add_node(relationship, type="Relationship"),
+            graph.add_node(relationship, type="Relationship", label=relationship),
             graph.add_edge(entitaet, relationship, Beziehung="Entität-Relationship", Kardinalität=cardinalitaet, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_muster_kanten[2], line)
