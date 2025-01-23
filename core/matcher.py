@@ -1,4 +1,4 @@
-import parse_into_graph
+import bachelorthesis.app.parse_into_graph as parse_into_graph
 import networkx as nx 
 
 musterloesung = """mermaid

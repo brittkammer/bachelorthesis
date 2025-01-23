@@ -1,4 +1,4 @@
-import parse_into_graph
+import bachelorthesis.app.parse_into_graph as parse_into_graph
 import networkx as nx
 
 musterloesung = """mermaid
@@ -57,7 +57,7 @@ flowchart
 # musterGraph = parse_into_graph.parse_mermaid_text(musterloesung)
 # studentenGraph = parse_into_graph.parse_mermaid_text(studentischeLoesung)
 
-import parse_into_graph
+import bachelorthesis.app.parse_into_graph as parse_into_graph
 import networkx as nx
 from difflib import get_close_matches
 

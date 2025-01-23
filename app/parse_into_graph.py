@@ -105,7 +105,7 @@ flowchart
 """
 
 
-graph = parse_mermaid_text(mermaid_text)
+# graph = parse_mermaid_text(mermaid_text)
 # print("Knoten:")
 # for node, data in graph.nodes(data=True):
 #     print(node, data)
