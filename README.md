@@ -21,3 +21,8 @@
     - [] Hinzufügen von Magic-Bibliothek 
     - [] vollständige Integration in Jupyter Notebook --> automatisiertes Feedback nach Abgabe
     - [] Wie kann die Musterlösung "geheim" gehalten / nicht einsehbar für Studenten bleiben?
+
+### How to start Docker: 
+
+    - docker build - t er_model_checker . 
+    - docker run -p 8000:8000 er_model_checker

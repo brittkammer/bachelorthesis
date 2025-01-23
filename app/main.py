@@ -26,12 +26,12 @@ def loesungPruefen(request: SolutionRequest):
     if musterloesung is None: 
         return {"error": "Musterlösung nicht gefunden"}
     
-    muster_graph = parse_mermaid_text(musterloesung)
-    studenten_graph = parse_mermaid_text(request.er_model)
+    else: 
+        print(f"Geladene Musterlösung: \n{musterloesung}")
 
-    feedback = compare_graphs(muster_graph, studenten_graph)
+        feedback = compare_graphs(parse_mermaid_text(musterloesung), parse_mermaid_text(request.er_model))
 
-    return {"feedback": feedback}
+        return {"feedback": feedback}
 
 @app.get("/diagram/")
 def show_diagram(request: Request, code: str):

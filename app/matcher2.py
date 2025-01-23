@@ -1,4 +1,4 @@
-# import parse_into_graph
+from app.parse_into_graph import parse_mermaid_text
 import networkx as nx 
 
 musterloesung = """mermaid
@@ -54,8 +54,8 @@ flowchart
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
 """
-# muster_graph = parse_into_graph.parse_mermaid_text(musterloesung)
-# studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung)
+# muster_graph = parse_mermaid_text(musterloesung)
+# studenten_graph = parse_mermaid_text(studentische_loesung)
 # print(studenten_graph.nodes())
 
 def compare_graphs(muster_graph, studenten_graph):
@@ -408,11 +408,8 @@ def compare_graphs(muster_graph, studenten_graph):
                 
     # print(f"Kanten in muster_graph: {muster_graph.edges(data=True)}")
     # print(f"Kanten in studenten_graph: {studenten_graph.edges(data=True)}")
-    # print(fehler)
-    # print(fehler_visualisierung["extra_Kanten_gelb"])
-    visualisieren(fehler_visualisierung, studentische_loesung)
-    return studentische_loesung
-# fehler = compare_graphs(muster_graph, studenten_graph)
+    feedback = visualisieren(fehler_visualisierung, studentische_loesung)
+    return feedback
 
 # Visualieren des Feedbakcs (Hinzufügen zu der studentischen Lösung)
 def visualisieren(fehler, studentische_loesung):
@@ -421,6 +418,4 @@ def visualisieren(fehler, studentische_loesung):
             if y not in studentische_loesung: 
                 studentische_loesung = studentische_loesung + f"\n {y}"
         
-    # print(studentische_loesung)
     return studentische_loesung
-    
