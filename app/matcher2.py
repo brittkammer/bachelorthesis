@@ -1,4 +1,5 @@
-from app.parse_into_graph import parse_mermaid_text
+from parse_into_graph import parse_mermaid_text
+from solution_parser import parse_solution
 import networkx as nx 
 
 musterloesung = """mermaid
@@ -55,7 +56,8 @@ flowchart
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
 """
 # muster_graph = parse_mermaid_text(musterloesung)
-# studenten_graph = parse_mermaid_text(studentische_loesung)
+muster_graph = parse_solution(musterloesung)
+studenten_graph = parse_mermaid_text(studentische_loesung)
 # print(studenten_graph.nodes())
 
 def compare_graphs(muster_graph, studenten_graph):
@@ -84,17 +86,6 @@ def compare_graphs(muster_graph, studenten_graph):
     }
 
 # Hinzufügen von fehlenden Kanten und Knoten auf der Fehlerliste
-    # for node, data in muster_graph.nodes(data=True): 
-    #     if studenten_graph.__contains__(node) == False:
-    #         fehler["fehlende_Knoten"].append(node)
-    #         fehler_visualisierung["fehlende_Knoten_Info"].append(f"   fehlerFehlendeKnoten[Fehler: Es fehlen noch Enitäten, Attribute oder Relationships!] \n    style fehlerFehlendeKnoten fill:#fde2e1,stroke:#b91c1c,stroke-width:2p,font-weight:bold;")
-    #         for knoten, daten in studenten_graph.nodes(data=True):
-    #             # wenn alle Kanten von node und Knoten gleich sind, dann Fehler für falscher_Name_Knoten
-    #             if muster_graph.__contains__(knoten) == False:
-    #                 if data == daten and sorted(list(muster_graph.neighbors(node))) == sorted(list(studenten_graph.neighbors(knoten))) and sorted(list(muster_graph.predecessors(node)))==sorted(list(studenten_graph.predecessors(knoten))):
-    #                     fehler["falscher_Name_Knoten"].append(f"Muster: {node} ist gemeint mit: {knoten}")
-    #                     fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"   style {knoten} fill:#F4CCCC,stroke:#F4CCCC,color:#CC0000,stroke-width:2px,font-weight:bold;")
-# Hinzufügen von fehlenden Kanten und Knoten auf der Fehlerliste
     for node, data in muster_graph.nodes(data=True): 
         if studenten_graph.has_node(node): 
             fehler["richtige_Knoten"].append(node)
@@ -107,6 +98,8 @@ def compare_graphs(muster_graph, studenten_graph):
             for knoten, daten in studenten_graph.nodes(data=True):
                 # Prüfen, ob der Knoten nicht in der Musterlösung enthalten ist
                 if not muster_graph.has_node(knoten):
+                    print(node, data)
+                    print(knoten, daten)
                     if data['type'] == daten['type'] and data['type']!='Attribut' and daten['type']!='Attribut':
                         # print(knoten, daten)
                         # print(node, data)
@@ -123,7 +116,9 @@ def compare_graphs(muster_graph, studenten_graph):
                         )                       
                         # print(muster_nachbarn)
                         # print(studenten_nachbarn)
-                        nicht_gefunden = set(studenten_nachbarn) - set(muster_nachbarn)
+                        # nicht_gefunden = set(studenten_nachbarn) - set(muster_nachbarn)
+                        nicht_gefunden = set(map(str, studenten_nachbarn)) - set(map(str, muster_nachbarn))
+
                         if len(nicht_gefunden) <= 3:  # Maximal ein/zwei Nachbar unterscheidet sich (zwei damit mehr Fehler erkannt werden?)
                             fehler["falscher_Name_Knoten"].append(
                                 f"Muster: {node}, {data} Studentische Lösung: {knoten}"
@@ -132,13 +127,12 @@ def compare_graphs(muster_graph, studenten_graph):
                                 f"   style {knoten} fill:#F4CCCC,stroke:#F4CCCC,color:#CC0000,stroke-width:2px,font-weight:bold;"
                             )
                         for nachbar in muster_nachbarn:
-                            # print(nachbar)
                             if muster_graph.has_edge(node, nachbar) and studenten_graph.has_edge(knoten, nachbar): 
                                 muster_kard = muster_graph.get_edge_data(node, nachbar)
                                 studenten_kard = studenten_graph.get_edge_data(knoten, nachbar)
-                                # print(node, data, muster_nachbarn)
-                                # print(knoten, daten, studenten_nachbarn)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -147,9 +141,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             elif muster_graph.has_edge(nachbar, node) and studenten_graph.has_edge(nachbar, knoten):
                                 muster_kard = muster_graph.get_edge_data(nachbar,node)
                                 studenten_kard = studenten_graph.get_edge_data(nachbar, knoten)
-                                # print(node, data, muster_nachbarn)
-                                # print(knoten, daten, studenten_nachbarn)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -182,7 +176,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             if muster_graph.has_edge(node, nachbar) and studenten_graph.has_edge(knoten, nachbar): 
                                 muster_kard = muster_graph.get_edge_data(node, nachbar)
                                 studenten_kard = studenten_graph.get_edge_data(knoten, nachbar)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -191,7 +187,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             elif muster_graph.has_edge(nachbar, node) and studenten_graph.has_edge(nachbar, knoten):
                                 muster_kard = muster_graph.get_edge_data(nachbar,node)
                                 studenten_kard = studenten_graph.get_edge_data(nachbar, knoten)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -224,7 +222,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             if muster_graph.has_edge(node, nachbar) and studenten_graph.has_edge(knoten, nachbar): 
                                 muster_kard = muster_graph.get_edge_data(node, nachbar)
                                 studenten_kard = studenten_graph.get_edge_data(knoten, nachbar)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität") : 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -233,7 +233,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             elif muster_graph.has_edge(nachbar, node) and studenten_graph.has_edge(nachbar, knoten):
                                 muster_kard = muster_graph.get_edge_data(nachbar,node)
                                 studenten_kard = studenten_graph.get_edge_data(nachbar, knoten)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -266,7 +268,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             if muster_graph.has_edge(node, nachbar) and studenten_graph.has_edge(knoten, nachbar): 
                                 muster_kard = muster_graph.get_edge_data(node, nachbar)
                                 studenten_kard = studenten_graph.get_edge_data(knoten, nachbar)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -275,7 +279,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             elif muster_graph.has_edge(nachbar, node) and studenten_graph.has_edge(nachbar, knoten):
                                 muster_kard = muster_graph.get_edge_data(nachbar,node)
                                 studenten_kard = studenten_graph.get_edge_data(nachbar, knoten)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -309,7 +315,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             if muster_graph.has_edge(node, nachbar) and studenten_graph.has_edge(knoten, nachbar): 
                                 muster_kard = muster_graph.get_edge_data(node, nachbar)
                                 studenten_kard = studenten_graph.get_edge_data(knoten, nachbar)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung') and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -318,7 +326,9 @@ def compare_graphs(muster_graph, studenten_graph):
                             elif muster_graph.has_edge(nachbar, node) and studenten_graph.has_edge(nachbar, knoten):
                                 muster_kard = muster_graph.get_edge_data(nachbar,node)
                                 studenten_kard = studenten_graph.get_edge_data(nachbar, knoten)
-                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                # if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") != studenten_kard.get("Kardinalität"): 
+                                if muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and not any(k in studenten_kard.get("Kardinalität") for k in muster_kard.get("Kardinalität")): 
+                                    # ##################### TESTEN #####################                                    
                                     fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studenten_kard.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                                 elif muster_kard.get('Beziehung') == studenten_kard.get('Beziehung')and muster_kard.get("Kardinalität") is not None and studenten_kard.get("Kardinalität") is not None and muster_kard.get("Kardinalität") == studenten_kard.get("Kardinalität"): 
                                     fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studenten_kard.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")
@@ -339,7 +349,6 @@ def compare_graphs(muster_graph, studenten_graph):
     for node, data in studenten_graph.nodes(data=True): 
         if muster_graph.__contains__(node) == False:
            
-            # muster_nachbarn = sorted(list(muster_graph.neighbors(node))) + sorted(list(muster_graph.predecessors(node)))
             studenten_nachbarn = sorted(list(studenten_graph.neighbors(node))) + sorted(list(studenten_graph.predecessors(node)))        
             if node not in fehler["falscher_Name_Knoten"] and node not in fehler["falscher_Typ_Knoten"] and node not in fehler["richtige_Knoten"]: # Prüfen, ob der Knoten ein falscher Knoten ist und deshalb nicht existiert oder ob er wirklich zusätzlich ist
                 fehler["extra_Knoten"].append(node)
@@ -362,7 +371,9 @@ def compare_graphs(muster_graph, studenten_graph):
                 if key == "type" and studentenloesung_data.get(key) != value:
                     fehler["falscher_Typ_Knoten"].append(f"Muster: {node}, {data} Studentische Lösung: {studentenloesung_data.get(key, None)}")
                     fehler_visualisierung["falscher_Typ_Knoten_rot"].append(f"   style {node} fill:#F4CCCC,stroke:#CC0000,stroke-width:2px") 
-                elif key == "label" and studentenloesung_data[key] != value: 
+                # elif key == "label" and studentenloesung_data[key] != value: 
+                ################## TESTEN ############################
+                elif key == "label" and not any(v in studentenloesung_data[key] for v in value):
                     fehler["falscher_Name_Knoten"].append(f"Muster: {node}, {data} Studentische Lösung: {studentenloesung_data.get(key, None)}")
                     fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"   style {node} fill:#F4CCCC,stroke:#F4CCCC,color:#CC0000, stroke-width:2px")
     for edge1, edge2, data in muster_graph.edges(data=True): 
@@ -419,3 +430,6 @@ def visualisieren(fehler, studentische_loesung):
                 studentische_loesung = studentische_loesung + f"\n {y}"
         
     return studentische_loesung
+
+ergebnis = compare_graphs(muster_graph, studenten_graph)
+# print(ergebnis)
