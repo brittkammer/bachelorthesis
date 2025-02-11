@@ -355,4 +355,4 @@ def visualisieren(fehler, studentische_loesung):
     return studentische_loesung
 
 ergebnis = compare_graphs(muster_graph, studenten_graph, studentische_loesung)
-print(ergebnis)
+# print(ergebnis)
