@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from app.matcher2 import compare_graphs
-from  app.parse_into_graph import parse_mermaid_text
+from app.parse_into_graph import parse_mermaid_text
+from app.solution_parser import parse_solution
+from app.graphMatcher import compare_graphs
 import os
 
 app = FastAPI()
@@ -29,7 +30,7 @@ def loesungPruefen(request: SolutionRequest):
     else: 
         print(f"Geladene Musterlösung: \n{musterloesung}")
 
-        feedback = compare_graphs(parse_mermaid_text(musterloesung), parse_mermaid_text(request.er_model))
+        feedback = compare_graphs(parse_solution(musterloesung), parse_mermaid_text(request.er_model))
 
         return {"feedback": feedback}
 

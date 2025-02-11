@@ -1,5 +1,5 @@
-from parse_into_graph import parse_mermaid_text
-from solution_parser import parse_solution
+from app.parse_into_graph import parse_mermaid_text
+from app.solution_parser import parse_solution
 import networkx as nx 
 from itertools import product
 

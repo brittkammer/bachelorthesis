@@ -151,7 +151,7 @@ def compare_graphs(muster_graph, studenten_graph):
                             #     print(studentNode, studentData) 
                             #     fehler["richtige_Knoten"].append(studentNode)
                             #     fehler_visualisierung["richtige_Knoten"].append(f"   style {studentNode} fill:#d4edda,stroke:#d4edda,stroke-width:2px")
-                            if len(nicht_gefunden) <= 3:  # Maximal ein/zwei/drei Nachbar unterscheidet sich (zwei damit mehr Fehler erkannt werden?)
+                            if len(nicht_gefunden) <= 2:  # Maximal ein/zwei/drei Nachbar unterscheidet sich (zwei damit mehr Fehler erkannt werden?)
                                 fehler["falscher_Name_Knoten"].append(
                                     f"Muster: {node}, {data} Studentische Lösung: {studentNode}"
                                 )
@@ -227,7 +227,7 @@ def compare_graphs(muster_graph, studenten_graph):
                                 fehler_visualisierung["falscher_Name_Knoten_rot"].append(
                                     f"   style {studentNode} fill:#F4CCCC,stroke:#F4CCCC,color:#CC0000,stroke-width:2px,font-weight:bold;"
                                 )
-                            print(f"Musternachbarn: {musterNachbarn}")
+                            # print(f"Musternachbarn: {musterNachbarn}")
                             for liste in musterNachbarn:
                                 
                                 for nachbar in liste:
@@ -364,4 +364,4 @@ def visualisieren(fehler, studentische_loesung):
     return studentische_loesung
 
 ergebnis = compare_graphs(muster_graph, studenten_graph)
-print(ergebnis)
+# print(ergebnis)
