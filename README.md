@@ -24,5 +24,5 @@
 
 ### How to start Docker: 
 
-    - docker build - t er_model_checker . 
+    - docker build -t er_model_checker . 
     - docker run -p 8000:8000 er_model_checker
