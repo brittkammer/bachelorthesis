@@ -16,9 +16,9 @@ musterloesung = """mermaid
         Bauteil---B1(["`<ins>Name</ins>`"])
         Bauteil---B2([Gewicht])
         Bauteil---B3([Größe])
-        B3([Größe])---B4([ae])
+        B3([Größe])---B4([Länge])
         B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Hoehe])
+        B3([Größe])---B6([Höhe])
     end
     subgraph SG3 [ ]
         Produzent--(1,*)---herstellen{herstellen|bauen}
@@ -67,7 +67,7 @@ studenten_graph = parse_mermaid_text(studentische_loesung)
 # print(dict(muster_graph.nodes(data=True)))
 
 ####################### FEHLERÜBERSICHT #################
-global fehler 
+global fehler, fehler_visualisierung
 fehler = {
 # Fehler bei Knoten
     "richtige_Knoten": [],
@@ -257,7 +257,7 @@ def entitätenPrüfen(MGraph, SGraph, studentNode, studentData):
         elementPrüfen(MGraph, SGraph, studentNode, studentData)
     else: 
         fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append('FEHLERMELDUNG') ########## HINZUFÜGEN
+        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFD966,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
 
 
 def relationshipsPrüfen(MGraph, SGraph, studentNode, studentData):
@@ -279,7 +279,7 @@ def relationshipsPrüfen(MGraph, SGraph, studentNode, studentData):
 
     else: 
         fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append('FEHLERMELDUNG') ########## HINZUFÜGEN
+        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFD966,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
 
 
 def attributePrüfen(MGraph, SGraph, studentNode, studentData): 
@@ -293,7 +293,7 @@ def attributePrüfen(MGraph, SGraph, studentNode, studentData):
 
             else: 
                 fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append('FEHLERMELDUNG') ########## HINZUFÜGEN
+                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFD966,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
     elif studentData['type'] == 'Primärschlüssel-Attribut':
         # Attribut darf nur an einer Entität oder einer zusammengesetztes Attribut liegen und nur einen Nachbarn haben
         for nachbar in studentenNachbarn:  
@@ -303,7 +303,7 @@ def attributePrüfen(MGraph, SGraph, studentNode, studentData):
 
             else: 
                 fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append('FEHLERMELDUNG') ########## HINZUFÜGEN         
+                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFD966,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN         
     elif studentData['type'] == 'zusammengesetztes Attribut':
         # Attribut kann mehrere Attribute enthalten (aber nur normale?)
         # anzahlPrimärschlüssel = 0 # not needed 
@@ -323,7 +323,7 @@ def attributePrüfen(MGraph, SGraph, studentNode, studentData):
 
         else: 
             fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-            fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append('FEHLERMELDUNG') ########## HINZUFÜGEN
+            fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFD966,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
 
 def nachbarnPrüfen(MGraph, musterNode, SGraph, studentNode): 
     musterLabels = [
@@ -354,5 +354,5 @@ def visualisieren(fehler, studentische_loesung):
         
     return studentische_loesung
 
-ergebnis = compare_graphs(muster_graph, studenten_graph, studentische_loesung)
+# ergebnis = compare_graphs(muster_graph, studenten_graph, studentische_loesung)
 # print(ergebnis)
