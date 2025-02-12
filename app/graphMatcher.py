@@ -4,68 +4,6 @@ import networkx as nx
 from itertools import product
 
 
-##################### PREPARING ######################
-musterloesung = """mermaid
-    flowchart
-    subgraph SG1 [ ]
-        Produzent---P1(["`<ins>ProdId</ins>`"])
-        Produzent---P2([Name])
-        Produzent---P3(((Zertifikate)))
-    end
-    subgraph SG2 [ ]
-        Bauteil---B1(["`<ins>Name</ins>`"])
-        Bauteil---B2([Gewicht])
-        Bauteil---B3([Größe])
-        B3([Größe])---B4([Länge])
-        B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Höhe])
-    end
-    subgraph SG3 [ ]
-        Produzent--(1,*)---herstellen{herstellen|bauen}
-        herstellen{herstellen|bauen}--(1,1)---Bauteil 
-        herstellen{herstellen|bauen}---H1([Jahr|Year])
-        Bauteil--(0,*)---bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
-    end    
-    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-"""
-
-studentische_loesung = """mermaid
-flowchart
-    subgraph SG1 [ ]
-        Produzent---P1(["`<ins>ProdId</ins>`"])
-        Produzent---P3(((Certificate)))
-    end
-    subgraph SG2 [ ]
-        Bauteil---B11(["`<ins>Name</ins>`"])
-        Bauteil---B22([Gewicht])
-        Bauteil---B3([Größe])
-        Bauteil---B7([Farbe])
-        B3([Größe])---C4([Länge])
-        B3([Größe])---C5([Breite])
-        B3([Größe])---C6([Höhe])
-    end
-    subgraph SG3 [ ]
-        Produzent--(1,*)---bauen{bauen}
-        bauen{bauen}--(2,2)---Bauteil
-        bauen{bauen}---F1([Year])
-        Bauteil--(2,3)---bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
-    end    
-    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-"""
-
-muster_graph = parse_solution(musterloesung)
-studenten_graph = parse_mermaid_text(studentische_loesung)
-
-#################### MATCHER #########################
-
-# print(dict(muster_graph.nodes(data=True)))
-
 ####################### FEHLERÜBERSICHT #################
 global fehler, fehler_visualisierung
 fehler = {
@@ -112,7 +50,7 @@ fehler_visualisierung= {
 # falscherTypKnotenROT = 
 # falscherKnotenROT = f"   style {studentNode} fill:#F4CCCC,stroke:#CC0000,color:#CC0000,stroke-width:2px,font-weight:bold"
 
-######################
+#################### MATCHER #########################
 
 def compare_graphs(musterGraph, studentenGraph, studentische_loesung):
     for studentNode, studentData in studentenGraph.nodes(data=True):
