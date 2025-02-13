@@ -9,9 +9,9 @@ flowchart
         Bauteil|Komponente---B1(["`<ins>Name|Modell|Typ</ins>`"])
         Bauteil|Komponente---B2([Gewicht|Masse])
         Bauteil|Komponente---B3([Größe|Maße|Abmessungen])
-        B3([Größe])---B4([Länge])
-        B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Höhe|Standhöhe])
+        B3([Größe|Maße|Abmessungen])---B4([Länge])
+        B3([Größe|Maße|Abmessungen])---B5([Breite])
+        B3([Größe|Maße|Abmessungen])---B6([Höhe|Standhöhe])
     end
     subgraph SG3 [ ]
         Produzent|Anbieter--(1,*)---herstellen{herstellen|produzieren|fertigen}
