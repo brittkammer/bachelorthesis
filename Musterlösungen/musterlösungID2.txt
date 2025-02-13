@@ -1,0 +1,26 @@
+mermaid
+flowchart
+    subgraph SG1 [ ]
+        Produzent|Anbieter---P1(["`<ins>ProdId|AnbieterID</ins>`"])
+        Produzent|Anbieter---P2([Name|Bezeichnung])
+        Produzent|Anbieter---P3(((Zertifikate|Bescheinigungen|Nachweise)))
+    end
+    subgraph SG2 [ ]
+        Bauteil|Komponente---B1(["`<ins>Name|Modell|Typ</ins>`"])
+        Bauteil|Komponente---B2([Gewicht|Masse])
+        Bauteil|Komponente---B3([Größe|Maße|Abmessungen])
+        B3([Größe])---B4([Länge])
+        B3([Größe])---B5([Breite])
+        B3([Größe])---B6([Höhe|Standhöhe])
+    end
+    subgraph SG3 [ ]
+        Produzent|Anbieter--(1,*)---herstellen{herstellen|produzieren|fertigen}
+        herstellen{herstellen|produzieren|fertigen}--(1,1|1,*)---Bauteil|Komponente 
+        herstellen{herstellen|produzieren|fertigen}---H1([Jahr|Produktionsjahr|Fertigungsjahr])
+        Bauteil|Komponente--(0,*|1,*)---bestehen_aus{bestehen_aus|enthält|setzt_sich_zusammen_aus}
+        bestehen_aus{bestehen_aus|enthält|setzt_sich_zusammen_aus}--(0,*|1,*)---Bauteil|Komponente
+    end    
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
