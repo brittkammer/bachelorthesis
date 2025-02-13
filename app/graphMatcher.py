@@ -68,7 +68,7 @@ def compare_graphs(musterGraph, studentenGraph, studentische_loesung):
                 kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
             elif 'Attribut' in studentData['type']:
                 attributePrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
-            elif studentData['type'] == "Schwache Entität":
+            elif studentData['type'] == "Schwache Entität": # ERM Regeln kontrollieren
                 entitätenPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
                 kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
 
