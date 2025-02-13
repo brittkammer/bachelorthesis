@@ -1,26 +1,82 @@
-```mermaid
-    flowchart
+flowchart
     subgraph SG1 [ ]
-        Produzent---P1(["`<ins>ProdId</ins>`"])
-        Produzent---P2([Name])
-        Produzent---P3(((Zertifikate)))
+        Angestellte---A1(["`<ins>Personal-Nr.</ins>`"])
+        Angestellte---A2([Name])
+        Angestellte---A3([Anschrift])
+        Angestellte---A4([Vorwahl])
+        Angestellte---A5([Telefon])
+        Angestellte---A6([Mindestlohn])
     end
+
     subgraph SG2 [ ]
-        Bauteil---B1(["`<ins>Name</ins>`"])
-        Bauteil---B2([Gewicht])
-        Bauteil---B3([Größe])
-        B3([Größe])---B4([Länge])
-        B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Höhe])
+        Filialen---F1(["`<ins>Nummer</ins>`"])
+        Filialen---F2([Anschrift])
+        Filialen---F3([Name])
+        Filialen---F4([Telefon])
+        Filialen---F5([Fax])
+        Filialen---F6([Vorwahl])
     end
     subgraph SG3 [ ]
-        Produzent--(1,*)---herstellen{herstellen}
-        herstellen{herstellen}--(1,1)---Bauteil 
-        herstellen{herstellen}---H1([Jahr])
-        Bauteil--(0,*)---bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
+        Angestellte--(N)---arbeitet_in{arbeitet_in}
+        arbeitet_in{arbeitet_in}--(1)---Filialen
+        arbeitet_in{arbeitet_in}---A7([seit])
+    end
+    subgraph SG4 [ ]
+        Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
+        Fahrzeuge---FZ2([TÜV])
+        Fahrzeuge---FZ3([Baujahr])
+        Fahrzeuge---FZ4([Fahrgestell-Nr.])
+    end
+
+    subgraph SG5 [ ]
+        Fahrzeuge---IS-A{{IS-A}}
+        IS-A{{IS-A}}---Transporter
+        IS-A{{IS-A}}---PKW
+        Transporter---TP1([T-Volumen])
+        PKW---P1(Sitzplätze)
+        PKW---P2(((Zusatzausstattung)))
+    end
+
+    subgraph SG6 [ ]
+       Filialen--(N)---fordern_an{fordern_an}
+       fordern_an{fordern_an}--(M)---Fahrzeuge
+       fordern_an{fordern_an}---fa1([Termin])
+       fordern_an{fordern_an}---fa2([Zeit])
+       fordern_an{fordern_an}---fa3([Dauer])
     end    
+
+    subgraph SG7 [ ]
+        Typen---T1(["`<ins>Kürzel</ins>`"])
+        Typen---T2([Beschreibung])
+    end
+
+    subgraph SG8 [ ]
+        Fahrzeuge--(N)---sind_von{sind_von}
+        sind_von{sind_von}--(1)---Typen
+    end
+
+    subgraph SG9 [ ]
+        Tarifklassen---TK1(["`<ins>Name</ins>`"])
+        Tarifklassen---TK2([Kilometersatz])
+        Tarifklassen---TK3([Grundgebühr])
+        Tarifklassen---TK4([Freikilometer])
+        Tarifklassen---TK5([Versicherung])
+    end
+
+    subgraph SG10 [ ]
+        Typen--(N)---sind_in{sind_in}
+        sind_in{sind_in}--(1)---Tarifklassen
+    end
+
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-```
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG6 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG7 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG8 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG9 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG10 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+
+    linkStyle default marker-end:none
