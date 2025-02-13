@@ -25,8 +25,8 @@ def parse_mermaid_text(mermaid_text):
         r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\[\[(\w+)\]\]" # Relationship{}---SchwacheEntität[[]]
     ] # 
     regex_is_a = [
-        r"IS\-A\{\{IS\-A}}---(\w+)", # IS-A{{}}---Entität(Subtyp)
-        r"(\w+)---IS\-A\{\{IS\-A}}" # Entität(Supertyp)---IS-A{{}}
+        r"(\w+)---IS\-A\{\{IS\-A}}---(\w+)", # Entität(Subtyp)---IS-A{{}}---Entität(Supertyp)
+        r"(\w+)---IS\-A\{\{IS\-A}}" # Entität(Subtyp)---IS-A{{}}
     ] 
 
     graph = nx.DiGraph()
@@ -35,11 +35,16 @@ def parse_mermaid_text(mermaid_text):
     counter_kanten = 0
     for line in lines: 
         matches = re.findall(regex_is_a[0], line)
-        for entitaet in matches:
-            graph.add_node(entitaet, type="Entität(Subtyp)", label=entitaet)
+        for entitaetSubtyp, entitaetSupertyp in matches:
+            graph.add_node(entitaetSubtyp, type="Entität(Subtyp)", label=entitaetSubtyp)
+            graph.add_node(entitaetSupertyp, type="Entität(Supertyp)", label=entitaetSupertyp)
+            graph.add_edge(entitaetSubtyp, entitaetSupertyp, Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
         matches = re.findall(regex_is_a[1], line)
         for entitaet in matches:
-            graph.add_node(entitaet, type="Entität(Supertyp)", label=entitaet)
+            graph.add_node(entitaet, type="Entität(Subtyp)", label=entitaet)
+            graph.add_edges_from(entitaetSubtyp, entitaetSupertyp, Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
 ##################### Entitäten und Attribute ###########################
         for muster in regex_muster_knoten:
             matches = re.findall(muster, line)
@@ -123,7 +128,9 @@ def parse_mermaid_text(mermaid_text):
             graph.add_node(attribut_id, type="Attribut", label=attribut_name)
             graph.add_edge(relationship, attribut_id, Beziehung="Relationship-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
+
     return graph 
+
 
 
 ################## DEBUGGING ###################

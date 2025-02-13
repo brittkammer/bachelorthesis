@@ -23,9 +23,9 @@ def parse_solution(mermaid_text):
         r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]" # Relationship{}---SchwacheEntität
     ] # schwache Enitäten 
     regex_is_a = [
-        r"IS\-A\{\{IS\-A\}\}---([a-zA-ZäöüÄÖÜß0-9_|]+)",
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}"
-    ] # Darstellungselement Is-A 
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}---([a-zA-ZäöüÄÖÜß0-9_|]+)", # Subtyp---IS-A{{}}---Supertyp
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}" # Subtyp---IS-A{{}}
+    ]  
 
     graph = nx.DiGraph()
     lines = mermaid_text.split("\n")
@@ -37,14 +37,19 @@ def parse_solution(mermaid_text):
         # Hinzufügen der Knoten
         ## Zeilen mit IS-A Beziehung hinzufügen
         matches = re.findall(regex_is_a[0], line)
-        for entitaet in matches: 
-            entitaetListe = entitaet.split("|")
-            graph.add_node(entitaetListe[0], type="Entität(Subtyp)", label=entitaetListe)
+        for entitaetSubtyp, entitaetSupertyp in matches: 
+            entitaetSubtypListe = entitaetSubtyp.split("|")
+            entitaetSupertypListe = entitaetSupertyp.split("|")
+            graph.add_node(entitaetSubtypListe[0], type="Entität(Subtyp)", label=entitaetSubtypListe)
+            graph.add_node(entitaetSupertypListe[0], type="Entität(Supertyp)", label=entitaetSupertypListe)
+            graph.add_edge(entitaetSubtypListe[0], entitaetSupertypListe[0], Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
         matches = re.findall(regex_is_a[1], line)
-        for entitaet in matches: 
-            entitaetListe = entitaet.split("|")
-            graph.add_node(entitaetListe[0], type="Entität(Supertyp)", label=entitaetListe)
-        
+        for entitaetSubtyp in matches: 
+            entitaetSubtypListe = entitaet.split("|")
+            graph.add_node(entitaetSubtypListe[0], type="Entität(Subtyp)", label=entitaetSubtypListe)
+            graph.add_edge(entitaetSubtypListe[0], entitaetSupertypListe[0], Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
+            counter_kanten = counter_kanten + 1
         for muster in regex_muster_knoten:
             ### Zeilen mit Attributen hinzufügen
             matches = re.findall(muster, line)
