@@ -57,11 +57,20 @@ def compare_graphs(musterGraph, studentenGraph, studentische_loesung):
                 # ERM MODELLIERUNGS REGELN PRÜFEN 
                 entitätenPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
                 kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
+            elif studentData['type'] == 'Entität(Supertyp)':
+                entitätenPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
+                kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
+            elif studentData['type'] == 'Entität(Subtyp)': 
+                entitätenPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
+                kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
             elif studentData['type'] == 'Relationship':
                 relationshipsPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
                 kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
             elif 'Attribut' in studentData['type']:
                 attributePrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
+            elif studentData['type'] == "Schwache Entität": # ERM Regeln kontrollieren
+                entitätenPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler, fehler_visualisierung)
+                kardinalitätPrüfen(musterGraph, studentenGraph, studentNode, studentData, fehler_visualisierung)
 
     if musterGraph.number_of_nodes() > studentenGraph.number_of_nodes(): 
         studentische_loesung = studentische_loesung + f"\n   fehlerFehlendeKnoten[Fehler: Es fehlen noch Enitäten, Attribute oder Relationships!] \n    style fehlerFehlendeKnoten fill:#fde2e1,stroke:#b91c1c,stroke-width:2p,font-weight:bold;"
@@ -130,7 +139,7 @@ def kardinalitätPrüfen(MGraph, SGraph, studentNode, studentData, fehler_visual
         "falscheKanten": []
     }
     for musterNode, musterData in MGraph.nodes(data=True):
-        if musterData['type'] =='Entität' and studentData['type'] == 'Entität' or musterData['type'] == 'Relationship' and studentData['type'] == 'Relationship':
+        if musterData['type'] =='Entität' and studentData['type'] == 'Entität' or musterData['type'] == 'Relationship' and studentData['type'] == 'Relationship' or musterData['type'] =='Entität(Supertyp)' and studentData['type'] == 'Entität(Supertyp)' or musterData['type'] =='Entität(Subtyp)' and studentData['type'] == 'Entität(Subtyp)':
                 studentenNachbarn = sorted(list(SGraph.neighbors(studentNode))) + sorted(list(SGraph.predecessors(studentNode)))
                 musterLabels = [
                 MGraph.nodes[n]['label'] if isinstance(MGraph.nodes[n]['label'], list)
@@ -144,25 +153,17 @@ def kardinalitätPrüfen(MGraph, SGraph, studentNode, studentData, fehler_visual
                         if MGraph.has_edge(musterNode, nachbar) and SGraph.has_edge(studentNode, nachbar):
                             musterEdgeData = MGraph.get_edge_data(musterNode, nachbar)
                             studentEdgeData = SGraph.get_edge_data(studentNode, nachbar)
-                            # print(musterNode, nachbar, musterEdgeData)
-                            # print(studentNode, nachbar, studentEdgeData)
                             if musterEdgeData.get('Kardinalität') is not None and studentEdgeData.get('Kardinalität') is not None and not any(k in studentEdgeData.get("Kardinalität") for k in musterEdgeData.get("Kardinalität")):
                                 fehlerdict['falscheKanten'].append( studentEdgeData.get('Nummer'))
-                                # fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studentEdgeData.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                             elif musterEdgeData.get('Kardinalität') is not None and studentEdgeData.get('Kardinalität') is not None and any(k in studentEdgeData.get("Kardinalität") for k in musterEdgeData.get("Kardinalität")):
                                 fehlerdict['richtigeKanten'].append(studentEdgeData.get('Nummer'))
-                                # fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studentEdgeData.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")                            
                         elif MGraph.has_edge(nachbar, musterNode) and SGraph.has_edge(nachbar, studentNode):
                             musterEdgeData = MGraph.get_edge_data(nachbar, musterNode)
                             studentEdgeData = SGraph.get_edge_data(nachbar, studentNode)
                             if musterEdgeData.get('Kardinalität') is not None and studentEdgeData.get('Kardinalität') is not None and not any(k in studentEdgeData.get("Kardinalität") for k in musterEdgeData.get("Kardinalität")):
                                 fehlerdict['falscheKanten'].append(studentEdgeData.get('Nummer'))
-                                # fehler_visualisierung["falsche_Kanten_rot"].append(f"   linkStyle {studentEdgeData.get('Nummer')} stroke:#d62728,stroke-width:4px,color:#d62728,fill:none;")
                             elif musterEdgeData.get('Kardinalität') is not None and studentEdgeData.get('Kardinalität') is not None and any(k in studentEdgeData.get("Kardinalität") for k in musterEdgeData.get("Kardinalität")):
                                 fehlerdict['richtigeKanten'].append(studentEdgeData.get('Nummer'))
-                                # fehler_visualisierung["richtige_Kanten_grün"].append(f"   linkStyle {studentEdgeData.get('Nummer')} color:#2ca02c,stroke:#d4edda,stroke-width:2px;")  
-                # for nachbarn in studentenNachbarn: 
-            #     if SGraph.has_edge(studentNode)
     for number in fehlerdict['richtigeKanten']: 
         if number in fehlerdict['falscheKanten']: 
             fehlerdict['falscheKanten'].remove(number)
@@ -182,13 +183,15 @@ def entitätenPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_v
     studentenNachbarn = sorted(list(SGraph.neighbors(studentNode))) + sorted(list(SGraph.predecessors(studentNode)))
     anzahlPrimärschlüssel = 0 # es darf nur ein Primärschlüssel geben
     booleanEntitäten = False # es darf keine andere Entität geben
+    anzahlSupertypen = 0 # es darf nur einen Supertyp als Nachbarn geben
     for nachbar in studentenNachbarn: 
         if SGraph.nodes[nachbar]['type'] == 'Primärschlüssel-Attribut': 
             anzahlPrimärschlüssel += 1 
-        if SGraph.nodes[nachbar]['type'] == 'Entität': 
+        if SGraph.nodes[nachbar]['type'] == 'Entität' or SGraph.nodes[nachbar]['type'] == 'Schwache Entität': # schwache Entitäten sind über ein Relationship gebunden
             booleanEntitäten = True
-    if anzahlPrimärschlüssel == 1 and booleanEntitäten == False: 
-        # elementPrüfen(MGraph, musterNode, musterData, SGraph, studentNode, studentData)
+        if SGraph.nodes[studentNode]['type'] == "Entität(Subtyp)" and SGraph.nodes[nachbar]['type'] == 'Entität(Supertyp)':
+            anzahlSupertypen += 1
+    if anzahlPrimärschlüssel == 1 and booleanEntitäten == False and (anzahlSupertypen == 0 or anzahlSupertypen == 1): 
         elementPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung)
     else: 
         fehler["NichteinhaltungERM-Regeln"].append(studentNode)
