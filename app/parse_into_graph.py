@@ -5,7 +5,7 @@ def parse_mermaid_text(mermaid_text):
     #regex_muster_knoten = r"(\w+)---(\w+)\(\[(?:(?:`?<ins>(.*?)<\/ins>`?)|([^\]]*?))\]\)|\((\w+)---(\w+)\(\(\((.*?)\)\)\)" 
     regex_muster_knoten = [
         r"(\w+)---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$",  # Mit <ins>-Tags - Primärschlüssel
-        r"(\w+)---(\w+)\(\[(\w+)\]\)$",                      # Ohne Tags - normales Attribut
+        r"(\w+)---(\w+)\(\[(.*?)\]\)$",                      # Ohne Tags - normales Attribut
         r"(\w+)---(\w+)\(\(\((.*?)\)\)\)$"                   # Verschachtelte Klammern - mehrwertiges Attribut
     ]
 
@@ -18,7 +18,7 @@ def parse_mermaid_text(mermaid_text):
     regex_schwache_entitaeten = [
         r"(\w+)\[\[(\w+)\]\]---(\w+)$", # SchwacheEntität[[]]---Entität
         r"(\w+)---(\w+)\[\[(\w+)\]\]$", # Entität---SchwacheEntität[[]]
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[(\w+)\]\)$", # SchwacheEntität[[]]---Attribut
+        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[(.*?)\]\)$", # SchwacheEntität[[]]---Attribut
         r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
         r"(\w+)\[\[(\w+)\]\]---(\w+)\(\(\((.*?)\)\)\)$", # SchwacheEntität[[]]---mehrwertige Attribut
         r"(\w+)\[\[(\w+)\]\]--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}$", # SchwacheEntität[[]]---Relationship{}
@@ -41,9 +41,9 @@ def parse_mermaid_text(mermaid_text):
             graph.add_edge(entitaetSubtyp, entitaetSupertyp, Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_is_a[1], line)
-        for entitaet in matches:
-            graph.add_node(entitaet, type="Entität(Subtyp)", label=entitaet)
-            graph.add_edges_from(entitaetSubtyp, entitaetSupertyp, Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
+        for entitaetSubtyp in matches:
+            graph.add_node(entitaetSubtyp, type="Entität(Subtyp)", label=entitaetSubtyp)
+            graph.add_edge(entitaetSubtyp, entitaetSupertyp, Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
 ##################### Entitäten und Attribute ###########################
         for muster in regex_muster_knoten:
@@ -66,20 +66,20 @@ def parse_mermaid_text(mermaid_text):
 ############ Schwache Entitäten ###################
         matches = re.findall(regex_schwache_entitaeten[0], line)
         for schwacheEntitaetID, schwacheEntitaet, entitaet in matches: 
-            print(f"TEST1 {matches}")
+            # print(f"TEST1 {matches}")
             graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat schwache Entität", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[1], line)
         for entitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
-            print(f"TEST2 {matches}")
+            # print(f"TEST2 {matches}")
 
             graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_edge(entitaet, schwacheEntitaetID, Beziehung="hat schwache Entität", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[2], line)
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
-            print(f"TEST3 {matches}")
+            # print(f"TEST3 {matches}")
             
             graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="Attribut", label=attribut_name)
@@ -87,7 +87,7 @@ def parse_mermaid_text(mermaid_text):
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[3], line)
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
-            print(f"TEST4 {matches}")
+            # print(f"TEST4 {matches}")
             
             graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attribut_name)
@@ -95,7 +95,7 @@ def parse_mermaid_text(mermaid_text):
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[4], line)
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
-            print(f"TEST5 {matches}")
+            # print(f"TEST5 {matches}")
             
             graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="mehrwertiges Attribut", label=attribut_name)
@@ -103,7 +103,7 @@ def parse_mermaid_text(mermaid_text):
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[5], line)
         for schwacheEntitaetID, schwacheEntitaet,cardinalitaet, relationship, relationship_name in matches: 
-            print(f"TEST6 {matches}")
+            # print(f"TEST6 {matches}")
             
             graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             if not graph.has_node(relationship):
@@ -112,7 +112,7 @@ def parse_mermaid_text(mermaid_text):
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[6], line)
         for relationship, relationship_name,cardinalitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
-            print(f"TEST7 {matches}")
+            # print(f"TEST7 {matches}")
             
             if not graph.has_node(relationship):
                 graph.add_node(relationship, type="Relationship", label=relationship_name)
@@ -150,37 +150,85 @@ def parse_mermaid_text(mermaid_text):
 
 ################## DEBUGGING ###################
 mermaid_text =  """mermaid
-flowchart 
-    subgraph SG1 [ ]
-        Land---L1(["`<ins>KFZ</ins>`"])
-    end
-    subgraph SG5 [ ]
-        Land--(1,*)---liegt{liegt}
-        Provinz[[Provinz]]--(1,1)---liegt{liegt}
-    end
-    subgraph SG2 [ ]
-        Stadt[[Stadt]]---S1(["`<ins>Name</ins>`"])
-        Stadt[[Stadt]]---S2([Einwohnerzahl])
-        Stadt[[Stadt]]---S3([Lage])
-        S3([Lage])---S4([Breitengrad])
-        S3([Lage])---S5([Längengrad])
-    end
-    subgraph SG4 [ ]
-        Land--(1,1)---ist_HS{ist_HS}
-        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
-    end
-    subgraph SG3 [ ]
-        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
-        Provinz[[Provinz]]---P2([Einwohnerzahl])
-        Provinz[[Provinz]]---P3([Fläche])
-    end
+flowchart
+subgraph SG1 [ ]
+    Angestellte---A1(["`<ins>Personal-Nr.</ins>`"])
+    Angestellte---A2([Name])
+    Angestellte---A3([Anschrift])
+    Angestellte---A4([Vorwahl])
+    Angestellte---A5([Telefon])
+    Angestellte---A6([Mindestlohn])
+end
 
-    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    linkStyle default marker-end:none
+subgraph SG2 [ ]
+    Filialen---F1(["`<ins>Nummer</ins>`"])
+    Filialen---F2([Anschrift])
+    Filialen---F3([Name])
+    Filialen---F4([Telefon])
+    Filialen---F5([Fax])
+    Filialen---F6([Vorwahl])
+end
+subgraph SG3 [ ]
+    Angestellte--(1,1)---arbeitet_in{arbeitet_in}
+    arbeitet_in{arbeitet_in}--(1,1)---Filialen
+    arbeitet_in{arbeitet_in}---A7([seit])
+end
+subgraph SG4 [ ]
+    Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
+    Fahrzeuge---FZ2([TÜV])
+    Fahrzeuge---FZ3([Baujahr])
+    Fahrzeuge---FZ4([Fahrgestell-Nr.])
+end
+
+subgraph SG5 [ ]
+    Transporter---IS-A{{IS-A}}---Fahrzeuge
+    PKW---IS-A{{IS-A}}
+    Transporter---TP1([T-Volumen])
+    PKW---P1([Sitzplätze])
+    PKW---P2(((Zusatzausstattung)))
+end
+
+subgraph SG6 [ ]
+Filialen--(1,1)---fordern_an{fordern_an}
+fordern_an{fordern_an}--(1,1)---Fahrzeuge
+fordern_an{fordern_an}---fa1([Termin])
+fordern_an{fordern_an}---fa2([Zeit])
+fordern_an{fordern_an}---fa3([Dauer])
+end    
+
+subgraph SG7 [ ]
+    Typen---T1(["`<ins>Kürzel</ins>`"])
+    Typen---T2([Beschreibung])
+end
+
+subgraph SG8 [ ]
+    Fahrzeuge--(1,1)---sind_von{sind_von}
+    sind_von{sind_von}--(1,1)---Typen
+end
+
+subgraph SG9 [ ]
+    Tarifklassen---TK1(["`<ins>Name</ins>`"])
+    Tarifklassen---TK2([Kilometersatz])
+    Tarifklassen---TK3([Grundgebühr])
+    Tarifklassen---TK4([Freikilometer])
+    Tarifklassen---TK5([Versicherung])
+end
+
+subgraph SG10 [ ]
+    Typen--(1,1)---sind_in{sind_in}
+    sind_in{sind_in}--(1,1)---Tarifklassen
+end
+
+style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG6 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG7 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG8 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG9 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+style SG10 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
 """
 
 # graph = parse_mermaid_text(mermaid_text)
