@@ -1,0 +1,36 @@
+flowchart 
+    subgraph SG1 [ ]
+        Land---L1(["`<ins>KFZ</ins>`"])
+    end
+    subgraph SG5 [ ]
+        Land--()---liegt{liegt}
+        Provinz[[Provinz]]--()---liegt{liegt}
+    end
+    subgraph SG2 [ ]
+        Stadt[[Stadt]]---S1(["`<ins>Name</ins>`"])
+        Stadt[[Stadt]]---S2([Einwohnerzahl])
+        Stadt[[Stadt]]---S3([Lage])
+        S3([Lage])---S4([Breitengrad])
+        S3([Lage])---S5([Längengrad])
+    end
+    subgraph SG4 [ ]
+        Land--(1,1)---ist_HS{ist_HS}
+        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
+    end
+    subgraph SG3 [ ]
+        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
+        Provinz[[Provinz]]---P2([Einwohnerzahl])
+        Provinz[[Provinz]]---P3([Fläche])
+    end
+
+
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
+
+#################################
+Alle Knoten sollten richitg sein. 
+#################################
