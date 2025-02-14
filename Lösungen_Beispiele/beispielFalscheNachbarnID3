@@ -1,0 +1,36 @@
+flowchart 
+    subgraph SG1 [ ]
+        Land---A1(["`<ins>KFZ</ins>`"])
+    end
+    subgraph SG5 [ ]
+        Land--(1,*)---liegt_in{liegt_in}
+        Stadt[[Stadt]]--(1,1)---liegt_in{liegt_in}
+    end
+    subgraph SG2 [ ]
+        Provinz[[Provinz]]---F1(["`<ins>Name</ins>`"])
+        Provinz[[Provinz]]---F2([EWZ|Einwohnerzahl])
+        Provinz[[Provinz]]---F3([Lage])
+        F3([Lage])---F4([BG])
+        F3([Lage])---F5([LG])
+    end
+    subgraph SG4 [ ]
+        Land--(1,1)---ist_HS{ist_HS}
+        ist_HS{ist_HS}--(0,1)---Provinz[[Provinz]]
+    end
+    subgraph SG3 [ ]
+        Stadt[[Stadt]]---P1(["`<ins>Name</ins>`"])
+        Stadt[[Stadt]]---P2([EWZ])
+        Stadt[[Stadt]]---P3([Fläche])
+    end
+
+
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
+
+#######################
+Die schwachen Entitäten  Stadt[[Stadt]] und Provinz[[Provinz]] wurden vertauscht.
+#######################
