@@ -4,25 +4,25 @@ import networkx as nx
 def parse_mermaid_text(mermaid_text):
     #regex_muster_knoten = r"(\w+)---(\w+)\(\[(?:(?:`?<ins>(.*?)<\/ins>`?)|([^\]]*?))\]\)|\((\w+)---(\w+)\(\(\((.*?)\)\)\)" 
     regex_muster_knoten = [
-        r"(\w+)---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$",  # Mit <ins>-Tags - Primärschlüssel
-        r"(\w+)---(\w+)\(\[(.*?)\]\)$",                      # Ohne Tags - normales Attribut
-        r"(\w+)---(\w+)\(\(\((.*?)\)\)\)$"                   # Verschachtelte Klammern - mehrwertiges Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$",  # Mit <ins>-Tags - Primärschlüssel
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\)$", # Ohne Tags - normales Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_.-]+)\)\)\)$"                   # Verschachtelte Klammern - mehrwertiges Attribut
     ]
 
     regex_muster_kanten = [
-        r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)$", # Relationship{}--()---Entiät
-        r"(\w+)--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}$", # Entität--()---Relationship{}
-        r"(\w+)\{(\w+)\}---(\w+)\(\[(\w+)\]\)$"                  # Relationship{}---Attribut([])
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\{([a-zA-ZäöüÄÖÜß0-9_.-]+)\}--\((\d,\*|\d,\d|\*?,\d)\)---([a-zA-ZäöüÄÖÜß0-9_.-]+)$", # Relationship{}--()---Entiät
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)--\((\d,\*|\d,\d|\*?,\d)\)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\{([a-zA-ZäöüÄÖÜß0-9_.-]+)\}$", # Entität--()---Relationship{}
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\{([a-zA-ZäöüÄÖÜß0-9_.-]+)\}---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\)$"                  # Relationship{}---Attribut([])
     ]
     regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+)\]\)---(\w+)\(\[([^\[\]]+)\]\)$" # für Attribute die Atrribute enthalten
     regex_schwache_entitaeten = [
-        r"(\w+)\[\[(\w+)\]\]---(\w+)$", # SchwacheEntität[[]]---Entität
-        r"(\w+)---(\w+)\[\[(\w+)\]\]$", # Entität---SchwacheEntität[[]]
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[(.*?)\]\)$", # SchwacheEntität[[]]---Attribut
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\(\((.*?)\)\)\)$", # SchwacheEntität[[]]---mehrwertige Attribut
-        r"(\w+)\[\[(\w+)\]\]--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}$", # SchwacheEntität[[]]---Relationship{}
-        r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\[\[(\w+)\]\]$" # Relationship{}---SchwacheEntität[[]]
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)$", # SchwacheEntität[[]]---Entität
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]$", # Entität---SchwacheEntität[[]]
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[(.*?)\]\)$", # SchwacheEntität[[]]---Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[\"`?<ins>([a-zA-Z0-9_.-]+)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_.-]+)\)\)\)$", # SchwacheEntität[[]]---mehrwertige Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]--\((\d,\*|\d,\d|\*?,\d)\)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\{([a-zA-ZäöüÄÖÜß0-9_.-]+)\}$", # SchwacheEntität[[]]---Relationship{}
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\{([a-zA-ZäöüÄÖÜß0-9_.-]+)\}--\((\d,\*|\d,\d|\*?,\d)\)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]$" # Relationship{}---SchwacheEntität[[]]
     ] # 
     regex_is_a = [
         r"(\w+)---IS\-A\{\{IS\-A}}---(\w+)$", # Entität(Subtyp)---IS-A{{}}---Entität(Supertyp)
@@ -149,87 +149,32 @@ def parse_mermaid_text(mermaid_text):
 
 
 ################## DEBUGGING ###################
-mermaid_text =  """mermaid
+mermaid_text =  """
 flowchart
-subgraph SG1 [ ]
-    Angestellte---A1(["`<ins>Personal-Nr.</ins>`"])
-    Angestellte---A2([Name])
-    Angestellte---A3([Anschrift])
-    Angestellte---A4([Vorwahl])
-    Angestellte---A5([Telefon])
-    Angestellte---A6([Mindestlohn])
-end
-
-subgraph SG2 [ ]
-    Filialen---F1(["`<ins>Nummer</ins>`"])
-    Filialen---F2([Anschrift])
-    Filialen---F3([Name])
-    Filialen---F4([Telefon])
-    Filialen---F5([Fax])
-    Filialen---F6([Vorwahl])
-end
-subgraph SG3 [ ]
-    Angestellte--(1,1)---arbeitet_in{arbeitet_in}
-    arbeitet_in{arbeitet_in}--(1,1)---Filialen
-    arbeitet_in{arbeitet_in}---A7([seit])
-end
-subgraph SG4 [ ]
-    Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
-    Fahrzeuge---FZ2([TÜV])
-    Fahrzeuge---FZ3([Baujahr])
-    Fahrzeuge---FZ4([Fahrgestell-Nr.])
-end
-
-subgraph SG5 [ ]
-    Transporter---IS-A{{IS-A}}---Fahrzeuge
-    PKW---IS-A{{IS-A}}
-    Transporter---TP1([T-Volumen])
-    PKW---P1([Sitzplätze])
-    PKW---P2(((Zusatzausstattung)))
-end
-
-subgraph SG6 [ ]
-Filialen--(1,1)---fordern_an{fordern_an}
-fordern_an{fordern_an}--(1,1)---Fahrzeuge
-fordern_an{fordern_an}---fa1([Termin])
-fordern_an{fordern_an}---fa2([Zeit])
-fordern_an{fordern_an}---fa3([Dauer])
-end    
-
-subgraph SG7 [ ]
-    Typen---T1(["`<ins>Kürzel</ins>`"])
-    Typen---T2([Beschreibung])
-end
-
-subgraph SG8 [ ]
-    Fahrzeuge--(1,1)---sind_von{sind_von}
-    sind_von{sind_von}--(1,1)---Typen
-end
-
-subgraph SG9 [ ]
-    Tarifklassen---TK1(["`<ins>Name</ins>`"])
-    Tarifklassen---TK2([Kilometersatz])
-    Tarifklassen---TK3([Grundgebühr])
-    Tarifklassen---TK4([Freikilometer])
-    Tarifklassen---TK5([Versicherung])
-end
-
-subgraph SG10 [ ]
-    Typen--(1,1)---sind_in{sind_in}
-    sind_in{sind_in}--(1,1)---Tarifklassen
-end
-
-style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG6 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG7 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG8 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG9 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-style SG10 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-"""
+    subgraph SG1 [ ]
+        Produzent---P1(["`<ins>ProdId</ins>`"])
+        Produzent---P3(((Zertifikate)))
+    end
+    subgraph SG2 [ ]
+        Bauteil---B11(["`<ins>Name</ins>`"])
+        Bauteil---B22([Gewicht])
+        Bauteil---B3([Größe])
+        Bauteil---B7([Farbe])
+        B3([Größe])---C4([Länge])
+        B3([Größe])---C5([Breite])
+        B3([Größe])---C6([Höhe])
+    end
+    subgraph SG3 [ ]
+        Produzent--(1,*)---bauen{bauen}
+        bauen{bauen}--(2,2)---Bauteil
+        bauen{bauen}---F1([Year])
+        Bauteil--(2,3)---bestehen_aus{bestehen_aus}
+        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
+    end    
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    """
 
 # graph = parse_mermaid_text(mermaid_text)
 # print("Knoten:")

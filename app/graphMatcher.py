@@ -292,5 +292,169 @@ def visualisieren(fehler, studentische_loesung):
         
     return studentische_loesung
 
-# ergebnis = compare_graphs(muster_graph, studenten_graph, studentische_loesung)
+
+
+
+###############  DEBUGGING  ################################
+# import parse_into_graph 
+# import solution_parser
+
+student = """
+        flowchart
+        subgraph SG1 [ ]
+            Angestellte---A1(["`<ins>Personal-Nr.</ins>`"])
+            Angestellte---A2([Name])
+            Angestellte---A3([Anschrift])
+            Angestellte---A4([Vorwahl])
+            Angestellte---A5([Telefon])
+            Angestellte---A6([Mindestlohn])
+        end
+
+        subgraph SG2 [ ]
+            Filialen---F1(["`<ins>Nummer</ins>`"])
+            Filialen---F2([Anschrift])
+            Filialen---F3([Name])
+            Filialen---F4([Telefon])
+            Filialen---F5([Fax])
+            Filialen---F6([Vorwahl])
+        end
+        subgraph SG3 [ ]
+            Angestellte--(1,1)---arbeitet_in{arbeitet_in}
+            arbeitet_in{arbeitet_in}--(1,1)---Filialen
+            arbeitet_in{arbeitet_in}---A7([seit])
+        end
+        subgraph SG4 [ ]
+            Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
+            Fahrzeuge---FZ2([TÜV])
+            Fahrzeuge---FZ3([Baujahr])
+            Fahrzeuge---FZ4([Fahrgestell-Nr.])
+        end
+
+        subgraph SG5 [ ]
+            Transporter---IS-A{{IS-A}}---Fahrzeuge
+            PKW---IS-A{{IS-A}}
+            Transporter---TP1([T-Volumen])
+            PKW---P1([Sitzplätze])
+            PKW---P2(((Zusatzausstattung)))
+        end
+
+        subgraph SG6 [ ]
+        Filialen--(1,1)---fordern_an{fordern_an}
+        fordern_an{fordern_an}--(1,1)---Fahrzeuge
+        fordern_an{fordern_an}---fa1([Termin])
+        fordern_an{fordern_an}---fa2([Zeit])
+        fordern_an{fordern_an}---fa3([Dauer])
+        end    
+
+        subgraph SG7 [ ]
+            Typen---T1(["`<ins>Kürzel</ins>`"])
+            Typen---T2([Beschreibung])
+        end
+
+        subgraph SG8 [ ]
+            Fahrzeuge--(1,1)---sind_von{sind_von}
+            sind_von{sind_von}--(1,1)---Typen
+        end
+
+        subgraph SG9 [ ]
+            Tarifklassen---TK1(["`<ins>Name</ins>`"])
+            Tarifklassen---TK2([Kilometersatz])
+            Tarifklassen---TK3([Grundgebühr])
+            Tarifklassen---TK4([Freikilometer])
+            Tarifklassen---TK5([Versicherung])
+        end
+
+        subgraph SG10 [ ]
+            Typen--(1,1)---sind_in{sind_in}
+            sind_in{sind_in}--(1,1)---Tarifklassen
+        end
+
+        style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG6 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG7 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG8 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG9 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+        style SG10 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    """
+
+muster = """mermaid
+flowchart
+    subgraph SG1 [ ]
+        Angestellte|Mitarbeiter|Personal---A1(["`<ins>Personal-Nr.</ins>`"])
+        Angestellte|Mitarbeiter|Personal---A2([Name])
+        Angestellte|Mitarbeiter|Personal---A3([Anschrift])
+        Angestellte|Mitarbeiter|Personal---A4([Vorwahl])
+        Angestellte|Mitarbeiter|Personal---A5([Telefon])
+        Angestellte|Mitarbeiter|Personal---A6([Mindestlohn])
+    end
+    subgraph SG2 [ ]
+        Filialen|Standort---F1(["`<ins>Nummer</ins>`"])
+        Filialen|Standort---F2([Anschrift])
+        Filialen|Standort---F3([Name])
+        Filialen|Standort---F4([Telefon])
+        Filialen|Standort---F5([Fax])
+        Filialen|Standort---F6([Vorwahl])
+    end
+    subgraph SG3 [ ]
+        Angestellte|Mitarbeiter|Personal--(1,1)---arbeitet_in{arbeitet_in}
+        arbeitet_in{arbeitet_in}--(1,1)---Filialen|Standort
+        arbeitet_in{arbeitet_in}---A7([seit])
+    end
+    subgraph SG4 [ ]
+        Transporter---IS-A{{IS-A}}---Fahrzeuge
+        PKW---IS-A{{IS-A}}
+        Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
+        Fahrzeuge---FZ2([TÜV])
+        Fahrzeuge---FZ3([Baujahr])
+        Fahrzeuge---FZ4([Fahrgestell-Nr.])
+    end
+    subgraph SG5 [ ]
+        Transporter---TP1([T-Volumen])
+        PKW---P1([Sitzplätze])
+        PKW---P2(((Zusatzausstattung)))
+    end
+    subgraph SG6 [ ]
+       Filialen|Standort--(1,1)---fordern_an{fordern_an}
+       fordern_an{fordern_an}--(1,1)---Fahrzeuge
+       fordern_an{fordern_an}---fa1([Termin])
+       fordern_an{fordern_an}---fa2([Zeit])
+       fordern_an{fordern_an}---fa3([Dauer])
+    end    
+    subgraph SG7 [ ]
+        Typen---T1(["`<ins>Kürzel</ins>`"])
+        Typen---T2([Beschreibung])
+    end
+    subgraph SG8 [ ]
+        Fahrzeuge--(1,1)---sind_von{sind_von}
+        sind_von{sind_von}--(1,1)---Typen
+    end
+    subgraph SG9 [ ]
+        Tarifklassen|TK---TK1(["`<ins>Name</ins>`"])
+        Tarifklassen|TK---TK2([Kilometersatz])
+        Tarifklassen|TK---TK3([Grundgebühr])
+        Tarifklassen|TK---TK4([Freikilometer])
+        Tarifklassen|TK---TK5([Versicherung])
+    end
+    subgraph SG10 [ ]
+        Typen--(1,1)---sind_in{sind_in}
+        sind_in{sind_in}--(1,1)---Tarifklassen|TK
+    end
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG6 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG7 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG8 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG9 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG10 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
+"""
+
+# ergebnis = compare_graphs(solution_parser.parse_solution(muster), parse_into_graph.parse_mermaid_text(student), student)
 # print(ergebnis)

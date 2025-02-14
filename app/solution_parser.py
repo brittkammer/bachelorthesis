@@ -212,8 +212,8 @@ flowchart
         Typen---T2([Beschreibung])
     end
     subgraph SG8 [ ]
-        Fahrzeuge--(N)---sind_von{sind_von}
-        sind_von{sind_von}--(1)---Typen
+        Fahrzeuge--(1,1)---sind_von{sind_von}
+        sind_von{sind_von}--(1,1)---Typen
     end
     subgraph SG9 [ ]
         Tarifklassen|TK---TK1(["`<ins>Name</ins>`"])
