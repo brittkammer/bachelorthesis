@@ -3,8 +3,8 @@ flowchart
         Land---A1(["`<ins>KFZ</ins>`"])
     end
     subgraph SG5 [ ]
-        Land--()---liegt_in{liegt_in|liegt}
-        Provinz[[Provinz]]--()---liegt_in{liegt_in|liegt}
+        Land--(1,*)---liegt_in{liegt_in|liegt}
+        Provinz[[Provinz]]--(1,1)---liegt_in{liegt_in|liegt}
     end
     subgraph SG2 [ ]
         Stadt[[Stadt]]---F1(["`<ins>Name</ins>`"])
