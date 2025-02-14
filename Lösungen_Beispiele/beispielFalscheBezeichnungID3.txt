@@ -1,0 +1,45 @@
+flowchart 
+    subgraph SG1 [ ]
+        Land---A1(["`<ins>Kennzeichen</ins>`"])
+    end
+    subgraph SG5 [ ]
+        Land--(1,1)---liegen_in{liegen_in}
+        Provinz[[Provinz]]--(1,1)---liegen_in{liegen_in}
+    end
+    subgraph SG2 [ ]
+        Städte[[Städte]]---F1(["`<ins>Name</ins>`"])
+        Städte[[Städte]]---F2([EWZ|Einwohnerzahl])
+        Städte[[Städte]]---F3([Koordinaten])
+        F3([Koordinaten])---F4([BG])
+        F3([Koordinaten])---F5([LG])
+    end
+    subgraph SG4 [ ]
+        Land--(1,*)---ist_Hauptstadt{ist_Hauptstadt}
+        ist_Hauptstadt{ist_Hauptstadt}--(0,1)---Städte[[Städte]]
+    end
+    subgraph SG3 [ ]
+        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
+        Provinz[[Provinz]]---P2([Einwohnerzahl])
+        Provinz[[Provinz]]---P3([Fläche])
+    end
+
+
+    style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
+
+####################
+Falsche Bezeichnungen der Knoten: 
+Kennzeichen
+liegen_in 
+Städte
+ist_Hauptstadt
+Koordinaten
+
+Falsche Kardinalitäten:
+Land--(1,1)---liegen_in{liegen_in}
+Land--(1,*)---ist_Hauptstadt{ist_Hauptstadt}
+###################
