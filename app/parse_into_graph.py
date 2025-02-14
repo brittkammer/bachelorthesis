@@ -4,29 +4,29 @@ import networkx as nx
 def parse_mermaid_text(mermaid_text):
     #regex_muster_knoten = r"(\w+)---(\w+)\(\[(?:(?:`?<ins>(.*?)<\/ins>`?)|([^\]]*?))\]\)|\((\w+)---(\w+)\(\(\((.*?)\)\)\)" 
     regex_muster_knoten = [
-        r"(\w+)---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)",  # Mit <ins>-Tags - Primärschlüssel
-        r"(\w+)---(\w+)\(\[(\w+)\]\)",                      # Ohne Tags - normales Attribut
-        r"(\w+)---(\w+)\(\(\((.*?)\)\)\)"                   # Verschachtelte Klammern - mehrwertiges Attribut
+        r"(\w+)---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$",  # Mit <ins>-Tags - Primärschlüssel
+        r"(\w+)---(\w+)\(\[(\w+)\]\)$",                      # Ohne Tags - normales Attribut
+        r"(\w+)---(\w+)\(\(\((.*?)\)\)\)$"                   # Verschachtelte Klammern - mehrwertiges Attribut
     ]
 
     regex_muster_kanten = [
-        r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)", # Relationship{}--()---Entiät
-        r"(\w+)--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}", # Entität--()---Relationship{}
-        r"(\w+)\{(\w+)\}---(\w+)\(\[(\w+)\]\)"                  # Relationship{}---Attribut([])
+        r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)$", # Relationship{}--()---Entiät
+        r"(\w+)--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}$", # Entität--()---Relationship{}
+        r"(\w+)\{(\w+)\}---(\w+)\(\[(\w+)\]\)$"                  # Relationship{}---Attribut([])
     ]
-    regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+)\]\)---(\w+)\(\[([^\[\]]+)\]\)" # für Attribute die Atrribute enthalten
+    regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+)\]\)---(\w+)\(\[([^\[\]]+)\]\)$" # für Attribute die Atrribute enthalten
     regex_schwache_entitaeten = [
-        r"(\w+)\[\[(\w+)\]\]---(\w+)", # SchwacheEntität[[]]---Entität
-        r"(\w+)---(\w+)\[\[(\w+)\]\]", # Entität---SchwacheEntität[[]]
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[(\w+)\]\)", # SchwacheEntität[[]]---Attribut
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)", # SchwacheEntität[[]]---Primärschlüssel-Attribut
-        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\(\((.*?)\)\)\)", # SchwacheEntität[[]]---mehrwertige Attribut
-        r"(\w+)\[\[(\w+)\]\]--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}", # SchwacheEntität[[]]---Relationship{}
-        r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\[\[(\w+)\]\]" # Relationship{}---SchwacheEntität[[]]
+        r"(\w+)\[\[(\w+)\]\]---(\w+)$", # SchwacheEntität[[]]---Entität
+        r"(\w+)---(\w+)\[\[(\w+)\]\]$", # Entität---SchwacheEntität[[]]
+        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[(\w+)\]\)$", # SchwacheEntität[[]]---Attribut
+        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\[\"`?<ins>(.*?)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
+        r"(\w+)\[\[(\w+)\]\]---(\w+)\(\(\((.*?)\)\)\)$", # SchwacheEntität[[]]---mehrwertige Attribut
+        r"(\w+)\[\[(\w+)\]\]--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\{(\w+)\}$", # SchwacheEntität[[]]---Relationship{}
+        r"(\w+)\{(\w+)\}--\((\d,\*|\d,\d|\*?,\d)\)---(\w+)\[\[(\w+)\]\]$" # Relationship{}---SchwacheEntität[[]]
     ] # 
     regex_is_a = [
-        r"(\w+)---IS\-A\{\{IS\-A}}---(\w+)", # Entität(Subtyp)---IS-A{{}}---Entität(Supertyp)
-        r"(\w+)---IS\-A\{\{IS\-A}}" # Entität(Subtyp)---IS-A{{}}
+        r"(\w+)---IS\-A\{\{IS\-A}}---(\w+)$", # Entität(Subtyp)---IS-A{{}}---Entität(Supertyp)
+        r"(\w+)---IS\-A\{\{IS\-A}}$" # Entität(Subtyp)---IS-A{{}}
     ] 
 
     graph = nx.DiGraph()
@@ -65,43 +65,58 @@ def parse_mermaid_text(mermaid_text):
                     counter_kanten = counter_kanten + 1
 ############ Schwache Entitäten ###################
         matches = re.findall(regex_schwache_entitaeten[0], line)
-        for schwacheEntitaetID, schwacheEntiaet, entitaet in matches: 
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
+        for schwacheEntitaetID, schwacheEntitaet, entitaet in matches: 
+            print(f"TEST1 {matches}")
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat schwache Entität", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[1], line)
-        for entitaet, schwacheEntitaetID, schwacheEntiaet in matches: 
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
+        for entitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
+            print(f"TEST2 {matches}")
+
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_edge(entitaet, schwacheEntitaetID, Beziehung="hat schwache Entität", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[2], line)
-        for schwacheEntitaetID, schwacheEntiaet, attribut_id, attribut_name in matches: 
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
+        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
+            print(f"TEST3 {matches}")
+            
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="Attribut", label=attribut_name)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[3], line)
-        for schwacheEntitaetID, schwacheEntiaet, attribut_id, attribut_name in matches:
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
+        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
+            print(f"TEST4 {matches}")
+            
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attribut_name)
             graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[4], line)
-        for schwacheEntitaetID, schwacheEntiaet, attribut_id, attribut_name in matches: 
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
+        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
+            print(f"TEST5 {matches}")
+            
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="mehrwertiges Attribut", label=attribut_name)
             graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[5], line)
-        for schwacheEntitaetID, schwacheEntiaet,cardinalitaet, relationship, relationship_name in matches: 
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
-            graph.add_node(relationship, type="Relationship", label=relationship_name)
+        for schwacheEntitaetID, schwacheEntitaet,cardinalitaet, relationship, relationship_name in matches: 
+            print(f"TEST6 {matches}")
+            
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+            if not graph.has_node(relationship):
+                graph.add_node(relationship, type="Relationship", label=relationship_name)
             graph.add_edge(schwacheEntitaetID, relationship, Beziehung="schwache Entität-Relationship", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[6], line)
-        for relationship, relationship_name,cardinalitaet, schwacheEntitaetID, schwacheEntiaet in matches: 
-            graph.add_node(relationship, type="Relationship", label=relationship_name)
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntiaet)
+        for relationship, relationship_name,cardinalitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
+            print(f"TEST7 {matches}")
+            
+            if not graph.has_node(relationship):
+                graph.add_node(relationship, type="Relationship", label=relationship_name)
+            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_edge(relationship, schwacheEntitaetID , Beziehung="Relationship-schwache Entität", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
 ################### Zusammengesetztes Attribut ################
@@ -135,33 +150,37 @@ def parse_mermaid_text(mermaid_text):
 
 ################## DEBUGGING ###################
 mermaid_text =  """mermaid
-flowchart
+flowchart 
     subgraph SG1 [ ]
-        Produzent---P1(["`<ins>ProdId</ins>`"])
-        Produzent---P3(((Zertifikate)))
+        Land---L1(["`<ins>KFZ</ins>`"])
+    end
+    subgraph SG5 [ ]
+        Land--(1,*)---liegt{liegt}
+        Provinz[[Provinz]]--(1,1)---liegt{liegt}
     end
     subgraph SG2 [ ]
-        Bauteil---IS-A{{IS-A}}
-        Bauteil---B1(["`<ins>Name</ins>`"])
-        Bauteil---B2([Gewicht])
-        Bauteil---B3([Größe])
-        Bauteil---B7([Farbe])
-        B3([Größe])---B4([Länge])
-        B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Höhe])
-        IS-A{{IS-A}}---Komponente
+        Stadt[[Stadt]]---S1(["`<ins>Name</ins>`"])
+        Stadt[[Stadt]]---S2([Einwohnerzahl])
+        Stadt[[Stadt]]---S3([Lage])
+        S3([Lage])---S4([Breitengrad])
+        S3([Lage])---S5([Längengrad])
+    end
+    subgraph SG4 [ ]
+        Land--(1,1)---ist_HS{ist_HS}
+        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
     end
     subgraph SG3 [ ]
-        Produzent--(1,*)---bauen{bauen}
-        bauen{bauen}--(1,1)---Bauteil 
-        bauen{bauen}---H1([Jahr])
-        Bauteil--(2,3)---bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
-    end    
+        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
+        Provinz[[Provinz]]---P2([Einwohnerzahl])
+        Provinz[[Provinz]]---P3([Fläche])
+    end
 
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
 """
 
 # graph = parse_mermaid_text(mermaid_text)

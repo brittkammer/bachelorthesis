@@ -3,28 +3,28 @@ import networkx as nx
 
 def parse_solution(mermaid_text):
     regex_muster_knoten = [
-    r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[\"`?<ins>([a-zA-ZäöüÄÖÜß0-9_|]+)<\/ins>`?\"\]\)",  # Mit <ins>-Tags - Primärschlüssel
-    r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\)",                      # Ohne Tags - normales Attribut
-    r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_|]+)\)\)\)"                   # Verschachtelte Klammern - mehrwertiges Attribut
+    r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[\"`?<ins>([a-zA-ZäöüÄÖÜß0-9_|]+)<\/ins>`?\"\]\)$",  # Mit <ins>-Tags - Primärschlüssel
+    r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\)$",                      # Ohne Tags - normales Attribut
+    r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_|]+)\)\)\)$"                   # Verschachtelte Klammern - mehrwertiges Attribut
     ]
     regex_muster_kanten = [
-    r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)", # Relationship{}--()---Entität
-    r"([a-zA-ZäöüÄÖÜß0-9_|]+)--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}", # Entität--()---Relationship{}
-    r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\)"                  # Relationship{}---Attribut([])
+    r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)$", # Relationship{}--()---Entität
+    r"([a-zA-ZäöüÄÖÜß0-9_|]+)--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}$", # Entität--()---Relationship{}
+    r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\)$"                  # Relationship{}---Attribut([])
     ]
-    regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+(?:\|[^\[\]]+)*)\]\)---(\w+)\(\[([^\[\]]+(?:\|[^\[\]]+)*)\]\)" # für Attribute die Atrribute enthalten
+    regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+(?:\|[^\[\]]+)*)\]\)---(\w+)\(\[([^\[\]]+(?:\|[^\[\]]+)*)\]\)$" # für Attribute die Atrribute enthalten
     regex_schwache_entitaeten = [
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_|]+)", # SchwacheEntität[[]]---Entität
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]", # Entität---SchwacheEntität[[]]
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\)", # SchwacheEntität[[]]---Attribut
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[\"`?<ins>([a-zA-ZäöüÄÖÜß0-9_|]+)<\/ins>`?\"\]\)", # SchwacheEntität[[]]---Primärschlüssel-Attribut
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_|]+)\)\)\)", # SchwacheEntität[[]]---mehrwertiges Attribut
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}", # SchwacheEntität[[]]---Relationship{}
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]" # Relationship{}---SchwacheEntität
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_|]+)$", # SchwacheEntität[[]]---Entität
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]$", # Entität---SchwacheEntität[[]]
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\)$", # SchwacheEntität[[]]---Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_]+)\(\[\"`?<ins>([a-zA-ZäöüÄÖÜß0-9_|]+)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_|]+)\)\)\)$", # SchwacheEntität[[]]---mehrwertiges Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}$", # SchwacheEntität[[]]---Relationship{}
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)\{([a-zA-ZäöüÄÖÜß0-9_|]+)\}--\(((?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*)(?:\|(?:\d+,\d+|\d+,\*|\*?,\d+|\d+|\*))*)\)---([a-zA-ZäöüÄÖÜß0-9_|]+)\[\[([a-zA-ZäöüÄÖÜß0-9_|]+)\]\]$" # Relationship{}---SchwacheEntität
     ] # schwache Enitäten 
     regex_is_a = [
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}---([a-zA-ZäöüÄÖÜß0-9_|]+)", # Subtyp---IS-A{{}}---Supertyp
-        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}" # Subtyp---IS-A{{}}
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}---([a-zA-ZäöüÄÖÜß0-9_|]+)$", # Subtyp---IS-A{{}}---Supertyp
+        r"([a-zA-ZäöüÄÖÜß0-9_|]+)---IS\-A\{\{IS\-A\}\}$" # Subtyp---IS-A{{}}
     ]  
 
     graph = nx.DiGraph()
