@@ -17,27 +17,26 @@ flowchart
         Filialen|Standort---F6([Vorwahl])
     end
     subgraph SG3 [ ]
-        Angestellte|Mitarbeiter|Personal--(N)---arbeitet_in{arbeitet_in}
-        arbeitet_in{arbeitet_in}--(1)---Filialen|Standort
+        Angestellte|Mitarbeiter|Personal--(1,1)---arbeitet_in{arbeitet_in}
+        arbeitet_in{arbeitet_in}--(1,1)---Filialen|Standort
         arbeitet_in{arbeitet_in}---A7([seit])
     end
     subgraph SG4 [ ]
+        Transporter---IS-A{{IS-A}}---Fahrzeuge
+        PKW---IS-A{{IS-A}}
         Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
         Fahrzeuge---FZ2([TÜV])
         Fahrzeuge---FZ3([Baujahr])
         Fahrzeuge---FZ4([Fahrgestell-Nr.])
     end
     subgraph SG5 [ ]
-        Fahrzeuge---IS-A{{IS-A}}
-        IS-A{{IS-A}}---Transporter
-        IS-A{{IS-A}}---PKW
         Transporter---TP1([T-Volumen])
-        PKW---P1(Sitzplätze)
+        PKW---P1([Sitzplätze])
         PKW---P2(((Zusatzausstattung)))
     end
     subgraph SG6 [ ]
-       Filialen|Standort--(N)---fordern_an{fordern_an}
-       fordern_an{fordern_an}--(M)---Fahrzeuge
+       Filialen|Standort--(1,1)---fordern_an{fordern_an}
+       fordern_an{fordern_an}--(1,1)---Fahrzeuge
        fordern_an{fordern_an}---fa1([Termin])
        fordern_an{fordern_an}---fa2([Zeit])
        fordern_an{fordern_an}---fa3([Dauer])
@@ -47,8 +46,8 @@ flowchart
         Typen---T2([Beschreibung])
     end
     subgraph SG8 [ ]
-        Fahrzeuge--(N)---sind_von{sind_von}
-        sind_von{sind_von}--(1)---Typen
+        Fahrzeuge--(1,1)---sind_von{sind_von}
+        sind_von{sind_von}--(1,1)---Typen
     end
     subgraph SG9 [ ]
         Tarifklassen|TK---TK1(["`<ins>Name</ins>`"])
@@ -58,8 +57,8 @@ flowchart
         Tarifklassen|TK---TK5([Versicherung])
     end
     subgraph SG10 [ ]
-        Typen--(N)---sind_in{sind_in}
-        sind_in{sind_in}--(1)---Tarifklassen|TK
+        Typen--(1,1)---sind_in{sind_in}
+        sind_in{sind_in}--(1,1)---Tarifklassen|TK
     end
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
