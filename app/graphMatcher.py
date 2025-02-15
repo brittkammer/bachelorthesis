@@ -297,8 +297,8 @@ def visualisieren(fehler, studentische_loesung):
 
 
 ###############  DEBUGGING  ################################
-import parse_into_graph 
-import solution_parser
+# import parse_into_graph 
+# import solution_parser
 
 student = """
 flowchart 
@@ -367,5 +367,5 @@ flowchart
     linkStyle default marker-end:none
 """
 
-ergebnis = compare_graphs(solution_parser.parse_solution(muster), parse_into_graph.parse_mermaid_text(student), student)
-print(ergebnis)
+# ergebnis = compare_graphs(solution_parser.parse_solution(muster), parse_into_graph.parse_mermaid_text(student), student)
+# print(ergebnis)
