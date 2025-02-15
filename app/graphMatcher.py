@@ -188,6 +188,7 @@ def entitätenPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_v
         if SGraph.nodes[nachbar]['type'] == 'Primärschlüssel-Attribut': 
             anzahlPrimärschlüssel += 1 
         if SGraph.nodes[nachbar]['type'] == 'Entität' or SGraph.nodes[nachbar]['type'] == 'Schwache Entität': # schwache Entitäten sind über ein Relationship gebunden
+            print(nachbar, SGraph.nodes[nachbar]['type'])
             booleanEntitäten = True
         if SGraph.nodes[studentNode]['type'] == "Entität(Subtyp)" and SGraph.nodes[nachbar]['type'] == 'Entität(Supertyp)':
             anzahlSupertypen += 1
@@ -296,8 +297,8 @@ def visualisieren(fehler, studentische_loesung):
 
 
 ###############  DEBUGGING  ################################
-# import parse_into_graph 
-# import solution_parser
+import parse_into_graph 
+import solution_parser
 
 student = """
 flowchart 
@@ -366,5 +367,5 @@ flowchart
     linkStyle default marker-end:none
 """
 
-# ergebnis = compare_graphs(solution_parser.parse_solution(muster), parse_into_graph.parse_mermaid_text(student), student)
-# print(ergebnis)
+ergebnis = compare_graphs(solution_parser.parse_solution(muster), parse_into_graph.parse_mermaid_text(student), student)
+print(ergebnis)

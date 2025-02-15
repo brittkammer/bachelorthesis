@@ -16,8 +16,8 @@ def parse_mermaid_text(mermaid_text):
     ]
     regex_zusammengesetztes_atrribut = r"(\w+)\(\[([^\[\]]+)\]\)---(\w+)\(\[([^\[\]]+)\]\)$" # für Attribute die Atrribute enthalten
     regex_schwache_entitaeten = [
-        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)$", # SchwacheEntität[[]]---Entität
-        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]$", # Entität---SchwacheEntität[[]]
+        # r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)$", # SchwacheEntität[[]]---Entität
+        # r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]$", # Entität---SchwacheEntität[[]]
         r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[(.*?)\]\)$", # SchwacheEntität[[]]---Attribut
         r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[\"`?<ins>([a-zA-Z0-9_.-]+)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
         r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_.-]+)\)\)\)$", # SchwacheEntität[[]]---mehrwertige Attribut
@@ -64,59 +64,52 @@ def parse_mermaid_text(mermaid_text):
                     graph.add_edge(entitaet, attribut_id, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
                     counter_kanten = counter_kanten + 1
 ############ Schwache Entitäten ###################
+        # matches = re.findall(regex_schwache_entitaeten[0], line)
+        # for schwacheEntitaetID, schwacheEntitaet, entitaet in matches: 
+        #     if not graph.has_node(schwacheEntitaetID):
+        #         graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+        #     graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat schwache Entität", Nummer=counter_kanten)
+        #     counter_kanten = counter_kanten + 1
+        # matches = re.findall(regex_schwache_entitaeten[1], line)
+        # for entitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
+        #     graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+        #     graph.add_edge(entitaet, schwacheEntitaetID, Beziehung="hat schwache Entität", Nummer=counter_kanten)
+        #     counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[0], line)
-        for schwacheEntitaetID, schwacheEntitaet, entitaet in matches: 
-            # print(f"TEST1 {matches}")
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
-            graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat schwache Entität", Nummer=counter_kanten)
-            counter_kanten = counter_kanten + 1
-        matches = re.findall(regex_schwache_entitaeten[1], line)
-        for entitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
-            # print(f"TEST2 {matches}")
-
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
-            graph.add_edge(entitaet, schwacheEntitaetID, Beziehung="hat schwache Entität", Nummer=counter_kanten)
-            counter_kanten = counter_kanten + 1
-        matches = re.findall(regex_schwache_entitaeten[2], line)
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
-            # print(f"TEST3 {matches}")
-            
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+            if not graph.has_node(schwacheEntitaetID):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet) 
             graph.add_node(attribut_id, type="Attribut", label=attribut_name)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
-        matches = re.findall(regex_schwache_entitaeten[3], line)
-        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
-            # print(f"TEST4 {matches}")
-            
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+        matches = re.findall(regex_schwache_entitaeten[1], line)
+        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:            
+            if not graph.has_node(schwacheEntitaetID):                
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attribut_name)
-            graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
+            graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
-        matches = re.findall(regex_schwache_entitaeten[4], line)
-        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
-            # print(f"TEST5 {matches}")
-            
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+        matches = re.findall(regex_schwache_entitaeten[2], line)
+        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:             
+            if not graph.has_node(schwacheEntitaetID):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="mehrwertiges Attribut", label=attribut_name)
-            graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
+            graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
-        matches = re.findall(regex_schwache_entitaeten[5], line)
-        for schwacheEntitaetID, schwacheEntitaet,cardinalitaet, relationship, relationship_name in matches: 
-            # print(f"TEST6 {matches}")
-            
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+        matches = re.findall(regex_schwache_entitaeten[3], line)
+        for schwacheEntitaetID, schwacheEntitaet,cardinalitaet, relationship, relationship_name in matches:             
+            if not graph.has_node(schwacheEntitaetID):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             if not graph.has_node(relationship):
                 graph.add_node(relationship, type="Relationship", label=relationship_name)
             graph.add_edge(schwacheEntitaetID, relationship, Beziehung="schwache Entität-Relationship", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
-        matches = re.findall(regex_schwache_entitaeten[6], line)
-        for relationship, relationship_name,cardinalitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
-            # print(f"TEST7 {matches}")
-            
+        matches = re.findall(regex_schwache_entitaeten[4], line)
+        for relationship, relationship_name,cardinalitaet, schwacheEntitaetID, schwacheEntitaet in matches:             
             if not graph.has_node(relationship):
                 graph.add_node(relationship, type="Relationship", label=relationship_name)
-            graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
+            if not graph.has_node(schwacheEntitaetID):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_edge(relationship, schwacheEntitaetID , Beziehung="Relationship-schwache Entität", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
 ################### Zusammengesetztes Attribut ################
@@ -150,30 +143,37 @@ def parse_mermaid_text(mermaid_text):
 
 ################## DEBUGGING ###################
 mermaid_text =  """
-flowchart
+flowchart 
     subgraph SG1 [ ]
-        Produzent---P1(["`<ins>ProdId</ins>`"])
-        Produzent---P3(((Zertifikate)))
+        Land---L1(["`<ins>KFZ</ins>`"])
+    end
+    subgraph SG5 [ ]
+        Land--(1,*)---liegt{liegt}
+        Provinz[[Provinz]]--(1,1)---liegt{liegt}
     end
     subgraph SG2 [ ]
-        Bauteil---B11(["`<ins>Name</ins>`"])
-        Bauteil---B22([Gewicht])
-        Bauteil---B3([Größe])
-        Bauteil---B7([Farbe])
-        B3([Größe])---C4([Länge])
-        B3([Größe])---C5([Breite])
-        B3([Größe])---C6([Höhe])
+        Stadt[[Stadt]]---S1(["`<ins>Name</ins>`"])
+        Stadt[[Stadt]]---S2([Einwohnerzahl])
+        Stadt[[Stadt]]---S3([Lage])
+        S3([Lage])---S4([Breitengrad])
+        S3([Lage])---S5([Längengrad])
+    end
+    subgraph SG4 [ ]
+        Land--(1,1)---ist_HS{ist_HS}
+        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
     end
     subgraph SG3 [ ]
-        Produzent--(1,*)---bauen{bauen}
-        bauen{bauen}--(2,2)---Bauteil
-        bauen{bauen}---F1([Year])
-        Bauteil--(2,3)---bestehen_aus{bestehen_aus}
-        bestehen_aus{bestehen_aus}--(0,*)---Bauteil
-    end    
+        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
+        Provinz[[Provinz]]---P2([Einwohnerzahl])
+        Provinz[[Provinz]]---P3([Fläche])
+    end
+
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
+    linkStyle default marker-end:none
     """
 
 # graph = parse_mermaid_text(mermaid_text)
