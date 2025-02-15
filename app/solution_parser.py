@@ -126,6 +126,8 @@ def parse_solution(mermaid_text):
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
             schwacheEntitaetListe = schwacheEntitaet.split("|")
             attributListe = attribut_name.split("|")
+            if not graph.has_node(schwacheEntitaetListe[0]):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
             graph.add_node(attribut_id, type="Attribut", label=schwacheEntitaetListe)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
@@ -133,6 +135,8 @@ def parse_solution(mermaid_text):
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
             schwacheEntitaetListe = schwacheEntitaet.split("|")
             attributListe = attribut_name.split("|")
+            if not graph.has_node(schwacheEntitaetListe[0]):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
             graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=schwacheEntitaetListe)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
@@ -140,6 +144,8 @@ def parse_solution(mermaid_text):
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
             schwacheEntitaetListe = schwacheEntitaet.split("|")
             attributListe = attribut_name.split("|")
+            if not graph.has_node(schwacheEntitaetListe[0]):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
             graph.add_node(attribut_id, type="mehrwertiges Attribut", label=schwacheEntitaetListe)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
@@ -148,6 +154,8 @@ def parse_solution(mermaid_text):
             schwacheEntitaetListe = schwacheEntitaet.split("|")
             cardinalitaetListe = cardinalitaet.split("|")
             relationshipListe = relationship_name.split("|")
+            if not graph.has_node(schwacheEntitaetListe[0]):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
             graph.add_node(relationship, type="Relationship", label=relationshipListe)
             graph.add_edge(schwacheEntitaetID, relationship, Beziehung="Schwache Entität-Relationship", Kardinalität=cardinalitaetListe, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
@@ -156,6 +164,8 @@ def parse_solution(mermaid_text):
             schwacheEntitaetListe = schwacheEntitaet.split("|")
             cardinalitaetListe = cardinalitaet.split("|")
             relationshipListe = relationship_name.split("|")
+            if not graph.has_node(schwacheEntitaetListe[0]):
+                graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
             graph.add_node(relationship, type="Relationship", label=relationshipListe)
             graph.add_edge(relationship,schwacheEntitaetID, Beziehung="Relationship-Schwache Entität", Kardinalität=cardinalitaetListe, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
@@ -165,79 +175,36 @@ def parse_solution(mermaid_text):
 ################## DEBUGGING ###################
  
 mermaid_text =  """mermaid
-flowchart
+flowchart 
     subgraph SG1 [ ]
-        Angestellte|Mitarbeiter|Personal---A1(["`<ins>Personal-Nr.</ins>`"])
-        Angestellte|Mitarbeiter|Personal---A2([Name])
-        Angestellte|Mitarbeiter|Personal---A3([Anschrift])
-        Angestellte|Mitarbeiter|Personal---A4([Vorwahl])
-        Angestellte|Mitarbeiter|Personal---A5([Telefon])
-        Angestellte|Mitarbeiter|Personal---A6([Mindestlohn])
-    end
-    subgraph SG2 [ ]
-        Filialen|Standort---F1(["`<ins>Nummer</ins>`"])
-        Filialen|Standort---F2([Anschrift])
-        Filialen|Standort---F3([Name])
-        Filialen|Standort---F4([Telefon])
-        Filialen|Standort---F5([Fax])
-        Filialen|Standort---F6([Vorwahl])
-    end
-    subgraph SG3 [ ]
-        Angestellte|Mitarbeiter|Personal--(1,1)---arbeitet_in{arbeitet_in}
-        arbeitet_in{arbeitet_in}--(1,1)---Filialen|Standort
-        arbeitet_in{arbeitet_in}---A7([seit])
-    end
-    subgraph SG4 [ ]
-        Transporter---IS-A{{IS-A}}---Fahrzeuge
-        PKW---IS-A{{IS-A}}
-        Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
-        Fahrzeuge---FZ2([TÜV])
-        Fahrzeuge---FZ3([Baujahr])
-        Fahrzeuge---FZ4([Fahrgestell-Nr.])
+        Land---A1(["`<ins>KFZ</ins>`"])
     end
     subgraph SG5 [ ]
-        Transporter---TP1([T-Volumen])
-        PKW---P1([Sitzplätze])
-        PKW---P2(((Zusatzausstattung)))
+        Land--(1,*)---liegt_in{liegt_in|liegt}
+        Provinz[[Provinz]]--(1,1)---liegt_in{liegt_in|liegt}
     end
-    subgraph SG6 [ ]
-       Filialen|Standort--(1,1)---fordern_an{fordern_an}
-       fordern_an{fordern_an}--(1,1)---Fahrzeuge
-       fordern_an{fordern_an}---fa1([Termin])
-       fordern_an{fordern_an}---fa2([Zeit])
-       fordern_an{fordern_an}---fa3([Dauer])
-    end    
-    subgraph SG7 [ ]
-        Typen---T1(["`<ins>Kürzel</ins>`"])
-        Typen---T2([Beschreibung])
+    subgraph SG2 [ ]
+        Stadt[[Stadt]]---F1(["`<ins>Name</ins>`"])
+        Stadt[[Stadt]]---F2([EWZ|Einwohnerzahl])
+        Stadt[[Stadt]]---F3([Lage])
+        F3([Lage])---F4([BG|Breitengrad])
+        F3([Lage])---F5([LG|Längengrad])
     end
-    subgraph SG8 [ ]
-        Fahrzeuge--(1,1)---sind_von{sind_von}
-        sind_von{sind_von}--(1,1)---Typen
+    subgraph SG4 [ ]
+        Land--(1,1)---ist_HS{ist_HS}
+        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
     end
-    subgraph SG9 [ ]
-        Tarifklassen|TK---TK1(["`<ins>Name</ins>`"])
-        Tarifklassen|TK---TK2([Kilometersatz])
-        Tarifklassen|TK---TK3([Grundgebühr])
-        Tarifklassen|TK---TK4([Freikilometer])
-        Tarifklassen|TK---TK5([Versicherung])
-    end
-    subgraph SG10 [ ]
-        Typen--(1,1)---sind_in{sind_in}
-        sind_in{sind_in}--(1,1)---Tarifklassen|TK
+    subgraph SG3 [ ]
+        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
+        Provinz[[Provinz]]---P2([EWZ|Einwohnerzahl])
+        Provinz[[Provinz]]---P3([Fläche])
     end
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG6 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG7 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG8 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG9 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG10 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     linkStyle default marker-end:none
-
 """
 
 
