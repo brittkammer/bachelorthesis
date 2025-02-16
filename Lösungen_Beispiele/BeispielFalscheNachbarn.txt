@@ -6,11 +6,11 @@ flowchart
         Produzent---B3([Größe])
         B3([Größe])---B4([Länge])
         B3([Größe])---B5([Breite])
-        B3([Größe])---B6([Höhe])
     end
     subgraph SG2 [ ]
         Komponente---B1(["`<ins>Bezeichnung</ins>`"])
-        Komponente---(((Zertifikate)))
+        Komponente---K1([Standort])
+        Komponente---K2(((Zertifikate)))
         Komponente---B2([Masse])
         Komponente---H1([Jahr])
 
@@ -35,4 +35,10 @@ Zertifikate
 Relationship an falscher Entität, d.h. falsche Nachbarn
 Fehler: 
 Produzent--bestehen_aus
+
+Zusätzliches Attribut: 
+Standort 
+
+Fehlendes Attribut: 
+Höhe
 ###############################

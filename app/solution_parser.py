@@ -44,7 +44,6 @@ def parse_solution(mermaid_text):
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_is_a[1], line)
         for entitaetSubtyp in matches: 
-            print(f"TESTESSSS {matches}")
             entitaetSubtypListe = entitaetSubtyp.split("|")
             graph.add_node(entitaetSubtypListe[0], type="Entität(Subtyp)", label=entitaetSubtypListe)
             graph.add_edge(entitaetSubtypListe[0], entitaetSupertypListe[0], Beziehung="IS-A-Beziehung", Nummer=counter_kanten)
@@ -108,27 +107,13 @@ def parse_solution(mermaid_text):
             graph.add_edge(relationship, attribut_id, Beziehung="Relationship-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
     #### Zeilen mit schwachen Entitäten hinzufügen
-        # matches = re.findall(regex_schwache_entitaeten[0], line)
-        # for schwacheEntitaetID, schwacheEntitaet, entitaet in matches:
-        #     schwacheEntitaetListe = schwacheEntitaet.split("|")
-        #     entitaetListe = entitaet.split("|")
-        #     graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
-        #     graph.add_edge(schwacheEntitaetID, entitaetListe[0], Beziehung="hat schwache Entität", Nummer=counter_kanten) 
-        #     counter_kanten = counter_kanten + 1
-        # matches = re.findall(regex_schwache_entitaeten[1], line)
-        # for entitaet, schwacheEntitaetID, schwacheEntitaet in matches:
-        #     schwacheEntitaetListe = schwacheEntitaet.split("|")
-        #     entitaetListe = entitaet.split("|")
-        #     graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
-        #     graph.add_edge(entitaetListe[0], schwacheEntitaetID, Beziehung="hat schwache Entität", Nummer=counter_kanten)
-        #     counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[0], line)
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:
             schwacheEntitaetListe = schwacheEntitaet.split("|")
             attributListe = attribut_name.split("|")
             if not graph.has_node(schwacheEntitaetListe[0]):
                 graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
-            graph.add_node(attribut_id, type="Attribut", label=schwacheEntitaetListe)
+            graph.add_node(attribut_id, type="Attribut", label=attributListe)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[1], line)
@@ -137,7 +122,7 @@ def parse_solution(mermaid_text):
             attributListe = attribut_name.split("|")
             if not graph.has_node(schwacheEntitaetListe[0]):
                 graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
-            graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=schwacheEntitaetListe)
+            graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attributListe)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Primärschlüssel-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[2], line)
@@ -146,7 +131,7 @@ def parse_solution(mermaid_text):
             attributListe = attribut_name.split("|")
             if not graph.has_node(schwacheEntitaetListe[0]):
                 graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaetListe)
-            graph.add_node(attribut_id, type="mehrwertiges Attribut", label=schwacheEntitaetListe)
+            graph.add_node(attribut_id, type="mehrwertiges Attribut", label=attributListe)
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[3], line)

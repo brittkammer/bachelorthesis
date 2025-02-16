@@ -119,18 +119,18 @@ def elementPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visu
                 else: 
                     fehlerdict['falscher_Knoten'].append(studentNode)
     if fehlerdict["richtige_Knoten"]: 
-        fehler_visualisierung["richtige_Knoten"].append(f"   style {studentNode} fill:#d4edda,stroke:#5a8f66,stroke-width:2px")
+        fehler_visualisierung["richtige_Knoten"].append(f"   style {studentNode} color:#000000,fill:#d4edda,stroke:#5a8f66,stroke-width:2px")
         return
     elif fehlerdict["falsche_Nachbarn"]:
-        fehler_visualisierung["falsche_Nachbarn_gelb"].append(f"   style {studentNode} fill:#FFD966,stroke:#FFD966,stroke-width:2px")
+        fehler_visualisierung["falsche_Nachbarn_gelb"].append(f"   style {studentNode} color:#000000,fill:#FFD966,stroke:#FFD966,stroke-width:2px")
         return
     elif fehlerdict["falscher_Name_Knoten"]: 
         fehler_visualisierung["falscher_Name_Knoten_rot"].append(f"   style {studentNode} color:#CC0000,stroke-width:2px,font-weight:bold")
         return
     elif fehlerdict['falscher_Typ_Knoten']: 
-        fehler_visualisierung['falscher_Typ_Knoten_rot'].append(f"   style {studentNode} stroke:#CC0000,stroke-width:3px")
+        fehler_visualisierung['falscher_Typ_Knoten_rot'].append(f"   style {studentNode} color:#000000,stroke:#CC0000,stroke-width:3px")
     elif fehlerdict["falscher_Knoten"]: 
-        fehler_visualisierung["falscher_Knoten_rot"].append(f"   style {studentNode} fill:#F4CCCC,stroke:#CC0000,color:#CC0000,stroke-width:2px,font-weight:bold")
+        fehler_visualisierung["falscher_Knoten_rot"].append(f"   style {studentNode} fill:#F4CCCC,stroke:#CC0000,color:#000000,stroke-width:2px,font-weight:bold")
         return
 
 def kardinalitätPrüfen(MGraph, SGraph, studentNode, studentData, fehler_visualisierung): 
@@ -139,7 +139,7 @@ def kardinalitätPrüfen(MGraph, SGraph, studentNode, studentData, fehler_visual
         "falscheKanten": []
     }
     for musterNode, musterData in MGraph.nodes(data=True):
-        if musterData['type'] =='Entität' and studentData['type'] == 'Entität' or musterData['type'] == 'Relationship' and studentData['type'] == 'Relationship' or musterData['type'] =='Entität(Supertyp)' and studentData['type'] == 'Entität(Supertyp)' or musterData['type'] =='Entität(Subtyp)' and studentData['type'] == 'Entität(Subtyp)':
+        if musterData['type'] =='Entität' and studentData['type'] == 'Entität' or musterData['type'] == 'Relationship' and studentData['type'] == 'Relationship' or musterData['type'] =='Entität(Supertyp)' and studentData['type'] == 'Entität(Supertyp)' or musterData['type'] =='Entität(Subtyp)' and studentData['type'] == 'Entität(Subtyp)' or studentData['type'] == 'Schwache Entität' and musterData['type'] == 'Schwache Entität':
                 studentenNachbarn = sorted(list(SGraph.neighbors(studentNode))) + sorted(list(SGraph.predecessors(studentNode)))
                 musterLabels = [
                 MGraph.nodes[n]['label'] if isinstance(MGraph.nodes[n]['label'], list)
@@ -160,10 +160,17 @@ def kardinalitätPrüfen(MGraph, SGraph, studentNode, studentData, fehler_visual
                         elif MGraph.has_edge(nachbar, musterNode) and SGraph.has_edge(nachbar, studentNode):
                             musterEdgeData = MGraph.get_edge_data(nachbar, musterNode)
                             studentEdgeData = SGraph.get_edge_data(nachbar, studentNode)
+                            # print( musterEdgeData.get('Kardinalität'))
+                            # print(studentEdgeData.get('Kardinalität'))
                             if musterEdgeData.get('Kardinalität') is not None and studentEdgeData.get('Kardinalität') is not None and not any(k in studentEdgeData.get("Kardinalität") for k in musterEdgeData.get("Kardinalität")):
+                                # print(studentNode, studentenNachbarn)
+                                # print(musterNode, musterNachbarn)
                                 fehlerdict['falscheKanten'].append(studentEdgeData.get('Nummer'))
                             elif musterEdgeData.get('Kardinalität') is not None and studentEdgeData.get('Kardinalität') is not None and any(k in studentEdgeData.get("Kardinalität") for k in musterEdgeData.get("Kardinalität")):
                                 fehlerdict['richtigeKanten'].append(studentEdgeData.get('Nummer'))
+                                # print(studentNode, studentenNachbarn)
+                                # print(musterNode, musterNachbarn)
+    
     for number in fehlerdict['richtigeKanten']: 
         if number in fehlerdict['falscheKanten']: 
             fehlerdict['falscheKanten'].remove(number)
@@ -188,7 +195,6 @@ def entitätenPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_v
         if SGraph.nodes[nachbar]['type'] == 'Primärschlüssel-Attribut': 
             anzahlPrimärschlüssel += 1 
         if SGraph.nodes[nachbar]['type'] == 'Entität' or SGraph.nodes[nachbar]['type'] == 'Schwache Entität': # schwache Entitäten sind über ein Relationship gebunden
-            print(nachbar, SGraph.nodes[nachbar]['type'])
             booleanEntitäten = True
         if SGraph.nodes[studentNode]['type'] == "Entität(Subtyp)" and SGraph.nodes[nachbar]['type'] == 'Entität(Supertyp)':
             anzahlSupertypen += 1
@@ -294,8 +300,6 @@ def visualisieren(fehler, studentische_loesung):
     return studentische_loesung
 
 
-
-
 ###############  DEBUGGING  ################################
 # import parse_into_graph 
 # import solution_parser
@@ -325,7 +329,6 @@ flowchart
         Provinz[[Provinz]]---P2([Einwohnerzahl])
         Provinz[[Provinz]]---P3([Fläche])
     end
-
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
@@ -344,8 +347,8 @@ flowchart
         Provinz[[Provinz]]--(1,1)---liegt_in{liegt_in|liegt}
     end
     subgraph SG2 [ ]
-        Stadt[[Stadt]]---F1(["`<ins>Name</ins>`"])
-        Stadt[[Stadt]]---F2([EWZ|Einwohnerzahl])
+        Stadt[[Stadt]]---F1(["`<ins>Stadtname</ins>`"])
+        Stadt[[Stadt]]---F2([EWZ_der_Stadt|Einwohnerzahl_in_Stadt])
         Stadt[[Stadt]]---F3([Lage])
         F3([Lage])---F4([BG|Breitengrad])
         F3([Lage])---F5([LG|Längengrad])
@@ -355,8 +358,8 @@ flowchart
         ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
     end
     subgraph SG3 [ ]
-        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
-        Provinz[[Provinz]]---P2([EWZ|Einwohnerzahl])
+        Provinz[[Provinz]]---P1(["`<ins>Provinzname|Name_der_Provinz</ins>`"])
+        Provinz[[Provinz]]---P2([EWZ_der_Provinz|Einwohnerzahl_der_Provinz])
         Provinz[[Provinz]]---P3([Fläche])
     end
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
@@ -365,6 +368,7 @@ flowchart
     style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     linkStyle default marker-end:none
+
 """
 
 # ergebnis = compare_graphs(solution_parser.parse_solution(muster), parse_into_graph.parse_mermaid_text(student), student)

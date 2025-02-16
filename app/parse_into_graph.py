@@ -18,7 +18,7 @@ def parse_mermaid_text(mermaid_text):
     regex_schwache_entitaeten = [
         # r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)$", # SchwacheEntität[[]]---Entität
         # r"([a-zA-ZäöüÄÖÜß0-9_.-]+)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]$", # Entität---SchwacheEntität[[]]
-        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[(.*?)\]\)$", # SchwacheEntität[[]]---Attribut
+        r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\)$", # SchwacheEntität[[]]---Attribut
         r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\[\"`?<ins>([a-zA-Z0-9_.-]+)<\/ins>`?\"\]\)$", # SchwacheEntität[[]]---Primärschlüssel-Attribut
         r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]---([a-zA-ZäöüÄÖÜß0-9_.-]+)\(\(\(([a-zA-ZäöüÄÖÜß0-9_.-]+)\)\)\)$", # SchwacheEntität[[]]---mehrwertige Attribut
         r"([a-zA-ZäöüÄÖÜß0-9_.-]+)\[\[([a-zA-ZäöüÄÖÜß0-9_.-]+)\]\]--\((\d,\*|\d,\d|\*?,\d)\)---([a-zA-ZäöüÄÖÜß0-9_.-]+)\{([a-zA-ZäöüÄÖÜß0-9_.-]+)\}$", # SchwacheEntität[[]]---Relationship{}
@@ -64,17 +64,6 @@ def parse_mermaid_text(mermaid_text):
                     graph.add_edge(entitaet, attribut_id, Beziehung="hat mehrwertiges Attribut", Nummer=counter_kanten)
                     counter_kanten = counter_kanten + 1
 ############ Schwache Entitäten ###################
-        # matches = re.findall(regex_schwache_entitaeten[0], line)
-        # for schwacheEntitaetID, schwacheEntitaet, entitaet in matches: 
-        #     if not graph.has_node(schwacheEntitaetID):
-        #         graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
-        #     graph.add_edge(schwacheEntitaetID, entitaet, Beziehung="hat schwache Entität", Nummer=counter_kanten)
-        #     counter_kanten = counter_kanten + 1
-        # matches = re.findall(regex_schwache_entitaeten[1], line)
-        # for entitaet, schwacheEntitaetID, schwacheEntitaet in matches: 
-        #     graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
-        #     graph.add_edge(entitaet, schwacheEntitaetID, Beziehung="hat schwache Entität", Nummer=counter_kanten)
-        #     counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[0], line)
         for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches: 
             if not graph.has_node(schwacheEntitaetID):
@@ -83,7 +72,7 @@ def parse_mermaid_text(mermaid_text):
             graph.add_edge(schwacheEntitaetID, attribut_id, Beziehung="hat Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[1], line)
-        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:            
+        for schwacheEntitaetID, schwacheEntitaet, attribut_id, attribut_name in matches:  
             if not graph.has_node(schwacheEntitaetID):                
                 graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             graph.add_node(attribut_id, type="Primärschlüssel-Attribut", label=attribut_name)
@@ -102,7 +91,7 @@ def parse_mermaid_text(mermaid_text):
                 graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
             if not graph.has_node(relationship):
                 graph.add_node(relationship, type="Relationship", label=relationship_name)
-            graph.add_edge(schwacheEntitaetID, relationship, Beziehung="schwache Entität-Relationship", Nummer=counter_kanten)
+            graph.add_edge(schwacheEntitaetID, relationship, Beziehung="schwache Entität-Relationship", Kardinalität=cardinalitaet, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_schwache_entitaeten[4], line)
         for relationship, relationship_name,cardinalitaet, schwacheEntitaetID, schwacheEntitaet in matches:             
@@ -110,7 +99,7 @@ def parse_mermaid_text(mermaid_text):
                 graph.add_node(relationship, type="Relationship", label=relationship_name)
             if not graph.has_node(schwacheEntitaetID):
                 graph.add_node(schwacheEntitaetID, type="Schwache Entität", label=schwacheEntitaet)
-            graph.add_edge(relationship, schwacheEntitaetID , Beziehung="Relationship-schwache Entität", Nummer=counter_kanten)
+            graph.add_edge(relationship, schwacheEntitaetID , Beziehung="Relationship-schwache Entität", Kardinalität=cardinalitaet, Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
 ################### Zusammengesetztes Attribut ################
         matches = re.findall(regex_zusammengesetztes_atrribut, line)
@@ -136,7 +125,6 @@ def parse_mermaid_text(mermaid_text):
             graph.add_node(attribut_id, type="Attribut", label=attribut_name)
             graph.add_edge(relationship, attribut_id, Beziehung="Relationship-Attribut", Nummer=counter_kanten)
             counter_kanten = counter_kanten + 1
-
     return graph 
 
 
@@ -145,29 +133,28 @@ def parse_mermaid_text(mermaid_text):
 mermaid_text =  """
 flowchart 
     subgraph SG1 [ ]
-        Land---L1(["`<ins>KFZ</ins>`"])
+        Land---A1(["`<ins>KFZ</ins>`"])
     end
     subgraph SG5 [ ]
         Land--(1,*)---liegt{liegt}
         Provinz[[Provinz]]--(1,1)---liegt{liegt}
     end
     subgraph SG2 [ ]
-        Stadt[[Stadt]]---S1(["`<ins>Name</ins>`"])
-        Stadt[[Stadt]]---S2([Einwohnerzahl])
-        Stadt[[Stadt]]---S3([Lage])
-        S3([Lage])---S4([Breitengrad])
-        S3([Lage])---S5([Längengrad])
+        Stadt[[Stadt]]---F1(["`<ins>Stadtname</ins>`"])
+        Stadt[[Stadt]]---F2([EWZ_der_Stadt])
+        Stadt[[Stadt]]---F3([Lage])
+        F3([Lage])---F4([Breitengrad])
+        F3([Lage])---F5([Längengrad])
     end
     subgraph SG4 [ ]
         Land--(1,1)---ist_HS{ist_HS}
         ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
     end
     subgraph SG3 [ ]
-        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
-        Provinz[[Provinz]]---P2([Einwohnerzahl])
+        Provinz[[Provinz]]---P1(["`<ins>Provinzname</ins>`"])
+        Provinz[[Provinz]]---P2([Einwohnerzahl_der_Provinz])
         Provinz[[Provinz]]---P3([Fläche])
     end
-
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
