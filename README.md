@@ -52,7 +52,31 @@ Wichtige Infos:
 |              | `Relationship{Relationship}--(x,y)---schwache_Entität[[schwache_Entität]]` |                                       | `ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]` |
 
 ### ERM Modellierungsregeln 
+## Entitäten: 
+* Die Form ist immer ein Rechteck.
+* Zwischen zwei Entitäten muss immer ein Relationship liege, das heißt diese sind nie direkt miteinander verbunden.
+* Eine Entität kann durch Attribute (normales Attribut, zusammengesetztes Attribut oder mehrwertiges Attribut) detaillierter beschrieben werden.
+* Eine Entität hat immer genau ein Primärschlüssel-Attribut.
 
+## Relationships:
+* Ein Relationship liegt immer zwischen zwei Entitäten.
+* Ein Relationship ist nie mit anderen Relationships verbunden.
+* Ein Relationship kann durch Attribute (kein Primärschlüssel-Attribut) genauer beschrieben werden.
+* Ein Relationship kann eine rekurisve Beziehung haben, das heißt in diesem Fall ist es nur mit einer Entität verbunden und besitzt zwei Kanten zu dieser.
+
+## Attribute:
+* Attribute beschreiben Entitäten oder Relationships genauer.
+* Nur ein zusammengesetztes Attribut kann mit anderen Attributen (normales Attribut, mehrwertiges Attribut oder Primärschlüssel-Attribut) verbunden sein.
+
+## Kardinalitäten
+- Kardinalitäten können nur auf Kanten zwischen Entität und Relationships sein.
+- Nach Min-Max-Notation wird die minimal und maximal zulässige Anzahl von Verbindungen zwischen einer Entität und einem Relationship beschrieben.
+    - <b>Min</b>: Die minimale Anzahl von Verbindungen, die eine Entität zu einem Relationship haben muss.
+    - <b>Max</b>: Die maximale Anzahl von Verbindungen, die eine Entität zu einem Relationship haben muss.
+    - <b>Zulässige Werte sind hier</b>:
+        - <code>0</code> = keine Verbindung erforderlich
+        - <code>1</code> = genau eine Verbindung
+        - <code>*</code> = eine beliebige Anzahl von Verbindungen ist möglich
 
 
 
