@@ -35,12 +35,12 @@ Wichtige Infos:
 
 | Darstellungselemente | Syntax | Beschreibung | Beispiel in Diagramm |
 |----------------------|--------|--------------|----------------------|
-| Entität(Subtyp) und Entität(Supertyp) | vSubtyp---IS-A{{IS-A}}---Supertyp` | Stellt eine IS-A Beziehung zwischen einem Subtyp und einem Supertyp von Entitäten dar. | `PKW---IS-A{{IS-A}}---Fahrzeug` |
+| Entität(Subtyp) und Entität(Supertyp) | `Subtyp---IS-A{{IS-A}}---Supertyp` | Stellt eine IS-A Beziehung zwischen einem Subtyp und einem Supertyp von Entitäten dar. | `PKW---IS-A{{IS-A}}---Fahrzeug` |
 | Entität(Subtyp) | `Subtyp---IS-A{{IS-A}}` | Stellt eine IS-A Beziehung mit einem Subtyp dar. Supertyp muss zuvor einmalig genannt werden. | `LKW---IS-A{{IS-A}}` |
 | Entität | `Entität---AttribuID([Attributname])` | Stellt eine Entität mit Attribut dar.| `Kunde---K1([Name])` |
-|         | `schwache_Entität[[schwache_Entität]]---AttribuID(["`<ins>Attributname</ins>`"])` | Darstellung einer schwachen Entität. | `Kunde[[Kunde]]---K1([Name)]` |
-| Primärschlüssel-Attribut | `Entität---AttributID(["<ins>Attributname</ins>"])` | Stellt eine Entität und ein Primärschlüssel-Attribut dar. | `Land---L1(["`<ins>KFZ</ins>`"])` |
-|                          | `Entität[[Entität]]---AttributID(["<ins>Attributname</ins>"])` | Stellt eine schwache Entität und ein Primärschlüssel-Attribut dar. | `Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])` |
+|         | `schwacheEntität[[schwacheEntität]]---AttributID([Attributname])` | Darstellung einer schwachen Entität. | `Kunde[[Kunde]]---K1([Name)]` |
+| Primärschlüssel-Attribut | `Entität---AttributID(["<ins>Attributname</ins>"])` | Stellt eine Entität und ein Primärschlüssel-Attribut dar. | `Land---L1(["<ins>KFZ</ins>"])` |
+|                          | `schwacheEntität[[schwacheEntität]]---AttributID(["<ins>Attributname</ins>"])` | Stellt eine schwache Entität und ein Primärschlüssel-Attribut dar. |  `Provinz[[Provinz]]---P1(["<ins>Name</ins>"])` |
 | mehrwertiges Attribut | `Entität---(((Attributname)))` | Verknüpfung zu einem mehrwertigen Attribut. | `Angestellter---A1(((Zertifikate)))` |
 |                       | `schwache_Entität[[schwache_Entität]]---(((Attributname)))` |  | `Angestellter---A1(((Zertifikate)))` |
 | zusammengesetztes Attribut | `Entität---AttributID([Attributname])` | Verknüpfung zu einem zusammengesetzten Attribut. | `Angestellte---A3([Anschrift])` |
