@@ -15,15 +15,41 @@
     - [] Erstellen einer GUI 
 
 ## Guideline to start
-### Projekt klonen
-
-### How to start Docker: 
+#### Projekt klonen
+* Projekt mit ssh key klonen
+* erforderliche Bibiliotheken (requests, IPython) installieren
+* Docker Container starten (Docker Desktop installieren)
+    
+#### How to start Docker: 
     - docker build -t er_model_checker . 
     - docker run -p 8000:8000 er_model_checker
     
-### Mermaid in Visual Studio Code nutzen 
+#### Mermaid in Visual Studio Code nutzen 
+* Extension "Markdown Preview Mermaid Support" installieren
+* drei backsticks in Markdown-Zellen verwenden, um das ERM direkt zu rendern (´´´mermaid ERM einsetzen ´´´)
+* bei Problemen kann auch der Mermaid-Live-Editor (https://mermaid.live/edit) zur Erstellung von ERM genutzt werden
 
-### Template Code für POST- und GET-API Aufruf in Code-Zelle
+#### Template Code für POST- und GET-API Aufruf in Code-Zelle
+```python
+import requests
+from IPython.display import display, HTML, Markdown
+base_url = "http://127.0.0.1:8000"
+post_endpoint = f"{base_url}/validate/"
+payload = {
+    "loesungID": 3,
+    "er_model": """
+    ERM EINSETZEN
+    """
+}
+response = requests.post(post_endpoint, json=payload)
+if response.status_code == 200:
+    feedback_mermaid = response.json().get("feedback")
+    display(Markdown(f"```\n{feedback_mermaid}\n```"))
+    else:
+        print("Keine Feedback-Daten erhalten.")
+else:
+    print("Fehler bei der Anfrage:", response.status_code, response.json())
+```
 
 ## Documentation
 ### Übersicht der Mermaid-Syntax 
@@ -77,14 +103,6 @@ Wichtige Infos:
         - <code>0</code> = keine Verbindung erforderlich
         - <code>1</code> = genau eine Verbindung
         - <code>*</code> = eine beliebige Anzahl von Verbindungen ist möglich
-
-
-
-
-
-
-
-
 
 
 
