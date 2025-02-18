@@ -1,5 +1,5 @@
 import parse_into_graph
-import networkx as nx 
+import networkx as nx
 
 musterloesung = """mermaid
     flowchart
@@ -57,40 +57,43 @@ flowchart
 muster_graph = parse_into_graph.parse_mermaid_text(musterloesung)
 studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung)
 
+
 def compare_graphs(muster_graph, studenten_graph):
     fehler = {
-# Fehler bei Knoten
+        # Fehler bei Knoten
         "fehlende_Knoten": [],
         "extra_Knoten": [],
-        "falscher_Typ_Knoten": [], #typabweichung
-        "falscher_Name_Knoten":[], # label
-# Fehler bei Kanten
+        "falscher_Typ_Knoten": [],  # typabweichung
+        "falscher_Name_Knoten": [],  # label
+        # Fehler bei Kanten
         "fehlende_Kanten": [],
         "extra_Kanten": [],
-        "falsche_Kanten": [] # Kardinalität, Beziehung?
+        "falsche_Kanten": [],  # Kardinalität, Beziehung?
     }
-    fehler_visualisierung= {
+    fehler_visualisierung = {
         "fehlende_Knoten_Info": [],
         "extra_Knoten_gelb": [],
         "falscher_Typ_Knoten_rot": [],
         "falscher_Name_Knoten_rot": [],
         "fehlende_Kanten_Info": [],
         "extra_Kanten_gelb": [],
-        "falsche_Kanten_rot": []
+        "falsche_Kanten_rot": [],
     }
 
-    for node, data in muster_graph.nodes(data=True): 
-        # if data["type"] == "Entität": 
+    for node, data in muster_graph.nodes(data=True):
+        # if data["type"] == "Entität":
         #     print("Entitäten")
         #     print(node, data)
-        # elif data["type"] == "Attribut" or data["type"] == "Primärschlüssel-Attribut" or data["type"] == "mehrwertiges Attribut" or data["type"] == "zusammengesetztes Attribut":  
+        # elif data["type"] == "Attribut" or data["type"] == "Primärschlüssel-Attribut" or data["type"] == "mehrwertiges Attribut" or data["type"] == "zusammengesetztes Attribut":
         #     print("Attribute")
-        #     print(node, data) 
+        #     print(node, data)
 
-        # elif data["type"] == "Relationship": 
+        # elif data["type"] == "Relationship":
         #     print("Relationships")
         #     print(node, data)
 
-    # for node, data entiät in data["type"] == "Entität": 
-            print(entität)
+        # for node, data entiät in data["type"] == "Entität":
+        print(entität)
+
+
 compare_graphs(muster_graph, studenten_graph)

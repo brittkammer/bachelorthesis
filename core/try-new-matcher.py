@@ -61,9 +61,11 @@ import bachelorthesis.app.parse_into_graph as parse_into_graph
 import networkx as nx
 from difflib import get_close_matches
 
+
 def finde_knoten_ersatz(knoten, muster_knoten_liste):
     matches = get_close_matches(knoten, muster_knoten_liste, n=1, cutoff=0.8)
     return matches[0] if matches else None
+
 
 muster_graph = parse_into_graph.parse_mermaid_text(musterloesung)
 studenten_graph = parse_into_graph.parse_mermaid_text(studentische_loesung)
@@ -79,6 +81,7 @@ for node in studenten_graph.nodes():
 # Knoten umbenennen, falls Fehler gefunden wurden
 studenten_graph = nx.relabel_nodes(studenten_graph, korrektur_map)
 
+
 def compare_graphs(muster_graph, studenten_graph):
     fehler = {
         "fehlende_Knoten": [],
@@ -87,14 +90,14 @@ def compare_graphs(muster_graph, studenten_graph):
         "falscher_Name_Knoten": [],
         "fehlende_Kanten": [],
         "extra_Kanten": [],
-        "falsche_Kanten": []
+        "falsche_Kanten": [],
     }
-    
+
     # Überprüfung fehlender und zusätzlicher Knoten
     for node in muster_graph.nodes():
         if not studenten_graph.has_node(node):
             fehler["fehlende_Knoten"].append(node)
-    
+
     for node in studenten_graph.nodes():
         if not muster_graph.has_node(node):
             fehler["extra_Knoten"].append(node)
@@ -113,12 +116,16 @@ def compare_graphs(muster_graph, studenten_graph):
     for edge1, edge2, data in muster_graph.edges(data=True):
         if studenten_graph.has_edge(edge1, edge2):
             studenten_data = studenten_graph.get_edge_data(edge1, edge2)
-            if studenten_data.get('Kardinalität') != data.get('Kardinalität'):
-                fehler["falsche_Kanten"].append(f"Muster: {edge1} zu {edge2} mit {data}, Studentische Lösung: {edge1} zu {edge2} {studenten_data}")
+            if studenten_data.get("Kardinalität") != data.get("Kardinalität"):
+                fehler["falsche_Kanten"].append(
+                    f"Muster: {edge1} zu {edge2} mit {data}, Studentische Lösung: {edge1} zu {edge2} {studenten_data}"
+                )
     print(fehler)
     return fehler
 
+
 fehler = compare_graphs(muster_graph, studenten_graph)
+
 
 # Fehler visualisieren
 def visualisieren(fehler, studentische_loesung):
@@ -127,5 +134,6 @@ def visualisieren(fehler, studentische_loesung):
             if str(y) not in studentische_loesung:
                 studentische_loesung = studentische_loesung + f"\n {y}"
     print(studentische_loesung)
+
 
 visualisieren(fehler, studentische_loesung)
