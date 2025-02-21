@@ -32,6 +32,7 @@ def parse_mermaid_text(mermaid_text):
     global counter_kanten
     counter_kanten = 0
     for line in lines:
+        line = line.strip()
         matches = re.findall(regex_is_a[0], line)
         for entitaetSubtyp, entitaetSupertyp in matches:
             graph.add_node(entitaetSubtyp, type="Entität(Subtyp)", label=entitaetSubtyp)
@@ -216,6 +217,8 @@ def parse_mermaid_text(mermaid_text):
         ####################### Relationships ###################################
         matches = re.findall(regex_muster_kanten[0], line)
         for relationship, relationship_name, cardinalitaet, entitaet in matches:
+            if not graph.has_node(entitaet):
+                graph.add_node(entitaet, type="Beziehung", label=entitaet)
             graph.add_node(relationship, type="Relationship", label=relationship_name),
             graph.add_edge(
                 relationship,
@@ -227,6 +230,8 @@ def parse_mermaid_text(mermaid_text):
             counter_kanten = counter_kanten + 1
         matches = re.findall(regex_muster_kanten[1], line)
         for entitaet, cardinalitaet, relationship, relationship_name in matches:
+            if not graph.has_node(entitaet):
+                graph.add_node(entitaet, type="Beziehung", label=entitaet)            
             graph.add_node(relationship, type="Relationship", label=relationship),
             graph.add_edge(
                 entitaet,
@@ -251,35 +256,31 @@ def parse_mermaid_text(mermaid_text):
 
 ############################### DEBUGGING ###########################
 mermaid_text = """
-flowchart 
+mermaid
+flowchart
     subgraph SG1 [ ]
-        Land---A1(["`<ins>KFZ</ins>`"])
-    end
-    subgraph SG5 [ ]
-        Land--(1,*)---liegt{liegt}
-        Provinz[[Provinz]]--(1,1)---liegt{liegt}
+        Anbieter---P1(["`<ins>AnbieterID</ins>`"])
+        Anbieter---P2([Name])
+        Anbieter---P3(((Nachweise)))
     end
     subgraph SG2 [ ]
-        Stadt[[Stadt]]---F1(["`<ins>Stadtname</ins>`"])
-        Stadt[[Stadt]]---F2([EWZ_der_Stadt])
-        Stadt[[Stadt]]---F3([Lage])
-        F3([Lage])---F4([Breitengrad])
-        F3([Lage])---F5([Längengrad])
-    end
-    subgraph SG4 [ ]
-        Land--(1,1)---ist_HS{ist_HS}
-        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
+        Bauteil---B1(["`<ins>Modell</ins>`"])
+        Bauteil---B2([Masse])
+        Bauteil---B3([Maße])
+        B3([Maße])---B4([Länge])
+        B3([Maße])---B5([Breite])
+        B3([Maße])---B6([Standhöhe])
     end
     subgraph SG3 [ ]
-        Provinz[[Provinz]]---P1(["`<ins>Provinzname</ins>`"])
-        Provinz[[Provinz]]---P2([Einwohnerzahl_der_Provinz])
-        Provinz[[Provinz]]---P3([Fläche])
-    end
+        Anbieter--(1,*)---produzieren{produzieren}
+        produzieren{produzieren}--(1,*)---Bauteil 
+        produzieren{produzieren}---H1([Produktionsjahr])
+        Bauteil--(1,*)---enthält{enthält}
+        enthält{enthält}--(1,*)---Bauteil
+    end    
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     linkStyle default marker-end:none
     """
 

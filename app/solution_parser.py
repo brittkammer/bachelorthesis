@@ -33,6 +33,7 @@ def parse_solution(mermaid_text):
     syntaxFehlerListe = []
     counter_kanten = 0
     for line in lines:
+        line.strip()
         ##################### IS-A Beziehungen ###########################
         matches = re.findall(regex_is_a[0], line)
         for entitaetSubtyp, entitaetSupertyp in matches:
@@ -148,6 +149,12 @@ def parse_solution(mermaid_text):
             relationshipListe = relationship_name.split("|")
             cardinalitaetListe = cardinalitaet.split("|")
             entitaetListe = entitaet.split("|")
+            if not graph.has_node(entitaetListe[0]):
+                graph.add_node(
+                    entitaet,
+                    type="Entität",
+                    label=entitaetListe,
+                )
             graph.add_node(relationship, type="Relationship", label=relationshipListe),
             graph.add_edge(
                 relationship,
@@ -163,6 +170,12 @@ def parse_solution(mermaid_text):
             entitaetListe = entitaet.split("|")
             relationshipListe = relationship_name.split("|")
             cardinalitaetListe = cardinalitaet.split("|")
+            if not graph.has_node(entitaetListe[0]):
+                graph.add_node(
+                    entitaet,
+                    type="Entität",
+                    label=entitaetListe,
+                )
             graph.add_node(relationship, type="Relationship", label=relationshipListe),
             graph.add_edge(
                 entitaetListe[0],
@@ -300,35 +313,30 @@ def parse_solution(mermaid_text):
 ############################# DEBUGGING #########################################
 
 mermaid_text = """mermaid
-flowchart 
+flowchart
     subgraph SG1 [ ]
-        Land---A1(["`<ins>KFZ</ins>`"])
-    end
-    subgraph SG5 [ ]
-        Land--(1,*)---liegt_in{liegt_in|liegt}
-        Provinz[[Provinz]]--(1,1)---liegt_in{liegt_in|liegt}
+        Produzent|Anbieter---P1(["`<ins>ProdId|AnbieterID</ins>`"])
+        Produzent|Anbieter---P2([Name|Bezeichnung])
+        Produzent|Anbieter---P3(((Zertifikate|Bescheinigungen|Nachweise)))
     end
     subgraph SG2 [ ]
-        Stadt[[Stadt]]---F1(["`<ins>Name</ins>`"])
-        Stadt[[Stadt]]---F2([EWZ|Einwohnerzahl])
-        Stadt[[Stadt]]---F3([Lage])
-        F3([Lage])---F4([BG|Breitengrad])
-        F3([Lage])---F5([LG|Längengrad])
-    end
-    subgraph SG4 [ ]
-        Land--(1,1)---ist_HS{ist_HS}
-        ist_HS{ist_HS}--(0,1)---Stadt[[Stadt]]
+        Bauteil|Komponente---B1(["`<ins>Name|Modell|Typ</ins>`"])
+        Bauteil|Komponente---B2([Gewicht|Masse])
+        Bauteil|Komponente---B3([Größe|Maße|Abmessungen])
+        B3([Größe|Maße|Abmessungen])---B4([Länge])
+        B3([Größe|Maße|Abmessungen])---B5([Breite])
+        B3([Größe|Maße|Abmessungen])---B6([Höhe|Standhöhe])
     end
     subgraph SG3 [ ]
-        Provinz[[Provinz]]---P1(["`<ins>Name</ins>`"])
-        Provinz[[Provinz]]---P2([EWZ|Einwohnerzahl])
-        Provinz[[Provinz]]---P3([Fläche])
-    end
+        Produzent|Anbieter--(1,*)---herstellen{herstellen|produzieren|fertigen}
+        Bauteil|Komponente--(1,1|1,*)---herstellen{herstellen|produzieren|fertigen}
+        herstellen{herstellen|produzieren|fertigen}---H1([Jahr|Produktionsjahr|Fertigungsjahr])
+        Bauteil|Komponente--(0,*|1,*)---bestehen_aus{bestehen_aus|enthält|setzt_sich_zusammen_aus}
+        bestehen_aus{bestehen_aus|enthält|setzt_sich_zusammen_aus}--(0,*|1,*)---Bauteil|Komponente
+    end    
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG3 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG4 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
-    style SG5 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     linkStyle default marker-end:none
 """
 # graph = parse_solution(mermaid_text)
