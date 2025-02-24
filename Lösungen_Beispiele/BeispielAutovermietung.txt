@@ -5,14 +5,14 @@ flowchart
         Angestellte---A2([Name_des_Angestellten])
         Angestellte---A3([Anschrift])
         Angestellte---A4([Vorwahl])
-        Angestellte---A5(((Telefon)))
+        Angestellte---A5(((Telefonnummer_Angestellte)))
         Angestellte---A6([Mindestlohn])
     end
     subgraph SG2 [ ]
         Filialstandort---F1(["`<ins>Nummer</ins>`"])
         Filialstandort---F2([Anschrift])
         Filialstandort---F3([Name_des_Standorts])
-        Filialstandort---F4([Telefon])
+        Filialstandort---F4([Telefonnummer_Standort])
         Filialstandort---F5([Fax])
     end
     subgraph SG3 [ ]
