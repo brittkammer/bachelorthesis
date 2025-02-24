@@ -36,7 +36,7 @@ flowchart
     end
     subgraph SG6 [ ]
        Filialen|Standort--(1,1)---fordern_an{fordern_an}
-       fordern_an{fordern_an}--(1,1)---Fahrzeuge
+       Fahrzeuge--(1,1)---fordern_an{fordern_an}
        fordern_an{fordern_an}---fa1([Termin])
        fordern_an{fordern_an}---fa2([Zeit])
        fordern_an{fordern_an}---fa3([Dauer])
@@ -47,7 +47,7 @@ flowchart
     end
     subgraph SG8 [ ]
         Fahrzeuge--(1,1)---sind_von{sind_von}
-        sind_von{sind_von}--(1,1)---Typen
+        Typen--(1,1)---sind_von{sind_von}
     end
     subgraph SG9 [ ]
         Tarifklassen|TK---TK1(["`<ins>Name</ins>`"])
@@ -58,7 +58,7 @@ flowchart
     end
     subgraph SG10 [ ]
         Typen--(1,1)---sind_in{sind_in}
-        sind_in{sind_in}--(1,1)---Tarifklassen|TK
+        Tarifklassen|TK--(1,1)---sind_in{sind_in}
     end
     style SG1 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
     style SG2 fill:#ff0000,fill-opacity:0.0,stroke:#333,stroke-width:0px
