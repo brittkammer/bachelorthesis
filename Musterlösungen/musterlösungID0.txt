@@ -2,17 +2,17 @@ mermaid
 flowchart
     subgraph SG1 [ ]
         Angestellte|Mitarbeiter|Personal---A1(["`<ins>Personal-Nr.</ins>`"])
-        Angestellte|Mitarbeiter|Personal---A2([Name])
+        Angestellte|Mitarbeiter|Personal---A2([Name_des_Angestellten])
         Angestellte|Mitarbeiter|Personal---A3([Anschrift])
         Angestellte|Mitarbeiter|Personal---A4([Vorwahl])
-        Angestellte|Mitarbeiter|Personal---A5([Telefon])
+        Angestellte|Mitarbeiter|Personal---A5([Telefonnummer_Angestellte])
         Angestellte|Mitarbeiter|Personal---A6([Mindestlohn])
     end
     subgraph SG2 [ ]
         Filialen|Standort---F1(["`<ins>Nummer</ins>`"])
         Filialen|Standort---F2([Anschrift])
-        Filialen|Standort---F3([Name])
-        Filialen|Standort---F4([Telefon])
+        Filialen|Standort---F3([Name_des_Standorts])
+        Filialen|Standort---F4([Telefonnummer_Standort])
         Filialen|Standort---F5([Fax])
         Filialen|Standort---F6([Vorwahl])
     end
@@ -24,7 +24,7 @@ flowchart
     subgraph SG4 [ ]
         Transporter---IS-A{{IS-A}}---Fahrzeuge
         PKW---IS-A{{IS-A}}
-        Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.</ins>`"])
+        Fahrzeuge---FZ1(["`<ins>KFZ-Zeichen-Nr.|KFZ</ins>`"])
         Fahrzeuge---FZ2([TÜV])
         Fahrzeuge---FZ3([Baujahr])
         Fahrzeuge---FZ4([Fahrgestell-Nr.])
