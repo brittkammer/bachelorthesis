@@ -199,12 +199,18 @@ def entitätenPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_v
             booleanEntitäten = True
         if SGraph.nodes[studentNode]['type'] == "Entität(Subtyp)" and SGraph.nodes[nachbar]['type'] == 'Entität(Supertyp)':
             anzahlSupertypen += 1
-    if anzahlPrimärschlüssel == 1 and booleanEntitäten == False and (anzahlSupertypen == 0 or anzahlSupertypen == 1): 
-        elementPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung)
-    else: 
-        fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
-
+    if studentData['type'] == 'Entität' or studentData['type'] == 'Entität(Supertyp)':
+        if anzahlPrimärschlüssel == 1 and booleanEntitäten == False : 
+            elementPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung)
+        else: 
+            fehler["NichteinhaltungERM-Regeln"].append(studentNode)
+            fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") 
+    elif studentData['type'] == 'Entität(Subtyp)': 
+        if booleanEntitäten == False and anzahlSupertypen == 1:
+            elementPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung)
+        else: 
+            fehler["NichteinhaltungERM-Regeln"].append(studentNode)
+            fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") 
 
 def relationshipsPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung):
     # Übersicht der Nachbarn 
@@ -224,7 +230,7 @@ def relationshipsPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehle
 
     else: 
         fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
+        fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px")
 
 
 def attributePrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung): 
@@ -237,7 +243,7 @@ def attributePrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_vi
 
             else: 
                 fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFA500,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
+                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} fill:#FFA500,stroke:#FFA500,stroke-width:2px")
     elif studentData['type'] == 'Primärschlüssel-Attribut':
         # Attribut darf nur an einer Entität oder einer zusammengesetztes Attribut liegen und nur einen Nachbarn haben
         for nachbar in studentenNachbarn:  
@@ -246,7 +252,7 @@ def attributePrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_vi
 
             else: 
                 fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN         
+                fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px")         
     elif studentData['type'] == 'zusammengesetztes Attribut':
         # Attribut kann mehrere Attribute enthalten
         anzahlMehrwertigeAttribute = 0
@@ -258,7 +264,7 @@ def attributePrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_vi
             elementPrüfen(MGraph, SGraph, studentNode, studentData, fehler, fehler_visualisierung)
         else: 
             fehler["NichteinhaltungERM-Regeln"].append(studentNode)
-            fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") ########## HINZUFÜGEN
+            fehler_visualisierung["NichteinhaltungERM-Regeln_Info"].append(f"   style {studentNode} color:#000000,fill:#FFA500,stroke:#FFA500,stroke-width:2px") 
 
 def nachbarnPrüfen(MGraph, musterNode, SGraph, studentNode): 
     musterLabels = [
