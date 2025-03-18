@@ -1,6 +1,13 @@
 # Abschlussarbeit
 # Entwicklung eines automatisierten Feedbacksystems von ER-Modellen
 
+## Inhaltsverzeichnis
+- [Ziel](#Ziel)
+- [Ausblick](#Ausblick)
+- [Guideline to start](#Guideline)
+- [Documentation](#Documentation)
+- [Farbcodes und Ursachen](#Farbcodes)
+
 ## Ziel: 
 - Abgabedatum: 03.03.2025
 
@@ -104,5 +111,15 @@ Wichtige Infos:
         - <code>1</code> = genau eine Verbindung
         - <code>*</code> = eine beliebige Anzahl von Verbindungen ist möglich
 
-
+## Farbcodes und Ursachen
+| Farbcode | Beschreibung | Ursache |
+|----------|--------------|---------|
+| Grünes Element | Richtiges Element | Das Element stimmt mit der Musterlösung überein. |
+| Rotes Element | Falsches Element | Das Element stimmt nicht mit der Musterlösung überein. |
+| Rote Beschriftung des Elementes | Das Element wurde falsch benannt. | In der Musterlösung ist ein Element des gleichen Typs an dieser Stelle platziert, jedoch stimmt die Bezeichnung nicht mit der Musterlösung überein. |
+| Rote Umrandung des Elementes | Falscher Elementtyp | Bezeichnung und Platzierung des ELementes stimmen mit der Musterlösung überein, jedoch unterscheidet sich der Typ des Elementes. |
+| Gelbes Element | Falsche Nachbarn | Eine Element wird gelb markiert, wenn die Nachbarn nicht mit der Musterlösung übereinstimmen. Dies ist der Fall wenn das Element einer falschen Position im Graphen zugeordnet wurde oder wenn Nachbarelemente fehlerhaft sind und dementsprechend sich die Nachbarn zur Musterlösung unterscheiden. |  
+| Oranges Element | Nichteinhaltung der ERM-Modellierungsregeln| Das Element verstößt gegen die oben aufgelisteten ERM-Modellierungsregeln. |
+| Grüne Kante und Kardinalität | Richtige Kante und Kardinalität | Die Kante und Kardinalität stimmen mit der Musterlösung überein. |
+| Rote Kante und Kardinalität | Falsche Kante und Kardinalität | Die Kante und Kardinalität stimmen nicht mit der Musterlösung überein. | 
 
