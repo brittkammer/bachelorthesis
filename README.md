@@ -4,9 +4,9 @@
 ## Inhaltsverzeichnis
 - [Ziel](#Ziel)
 - [Ausblick](#Ausblick)
-- [Guideline to start](#Guideline)
+- [Guideline to start](#Guideline-to-start)
 - [Documentation](#Documentation)
-- [Farbcodes und Ursachen](#Farbcodes)
+- [Farbcodes und Ursachen](#Farbcodes-und-Ursachen)
 
 ## Ziel: 
 - Abgabedatum: 03.03.2025
