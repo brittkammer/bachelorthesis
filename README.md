@@ -43,15 +43,17 @@ from IPython.display import display, HTML, Markdown
 base_url = "http://127.0.0.1:8000"
 post_endpoint = f"{base_url}/validate/"
 payload = {
-    "loesungID": 3,
+    "loesungID": ID DER MUSTERLÖSUNG EINSETZEN,
     "er_model": """
-    ERM EINSETZEN
+    HIER ERM EINSETZEN
     """
 }
 response = requests.post(post_endpoint, json=payload)
+# Ergebnis überprüfen
 if response.status_code == 200:
     feedback_mermaid = response.json().get("feedback")
-    display(Markdown(f"```\n{feedback_mermaid}\n```"))
+    if feedback_mermaid:
+        display(Markdown(f"```mermaid\n{feedback_mermaid}\n```"))
     else:
         print("Keine Feedback-Daten erhalten.")
 else:
