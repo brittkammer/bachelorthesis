@@ -122,6 +122,6 @@ Wichtige Infos:
 | Rote Umrandung des Elementes | Falscher Elementtyp | Bezeichnung und Platzierung des ELementes stimmen mit der Musterlösung überein, jedoch unterscheidet sich der Typ des Elementes. |
 | Gelbes Element | Falsche Nachbarn | Eine Element wird gelb markiert, wenn die Nachbarn nicht mit der Musterlösung übereinstimmen. Dies ist der Fall wenn das Element einer falschen Position im Graphen zugeordnet wurde oder wenn Nachbarelemente fehlerhaft sind und dementsprechend sich die Nachbarn zur Musterlösung unterscheiden. |  
 | Oranges Element | Nichteinhaltung der ERM-Modellierungsregeln| Das Element verstößt gegen die oben aufgelisteten ERM-Modellierungsregeln. |
-| Grüne Kante und Kardinalität | Richtige Kante und Kardinalität | Die Kante und Kardinalität stimmen mit der Musterlösung überein. |
-| Rote Kante und Kardinalität | Falsche Kante und Kardinalität | Die Kante und Kardinalität stimmen nicht mit der Musterlösung überein. | 
+| Grüne Kante und Kardinalität | Richtige Kante und Kardinalität | Die Kardinalitätsangabe stimmt mit der Musterlösung überein. |
+| Rote Kante und Kardinalität | Falsche Kante und Kardinalität | Die Kardinalitätsangabe stimmt nicht mit der Musterlösung überein. | 
 
